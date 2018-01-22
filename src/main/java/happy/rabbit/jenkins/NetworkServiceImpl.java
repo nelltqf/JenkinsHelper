@@ -2,7 +2,14 @@ package happy.rabbit.jenkins;
 
 
 import happy.rabbit.http.Request;
+import org.apache.http.HttpResponse;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.XML;
+import org.w3c.dom.Document;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 public class NetworkServiceImpl implements NetworkService {
 
