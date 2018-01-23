@@ -1,14 +1,17 @@
 package happy.rabbit.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 
 public class JenkinsItem {
 
     private Integer id;
-    private LocalDateTime published;
     private FailureReason failureReason;
     private String content;
     private boolean isBroken;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private LocalDateTime published;
 
     public JenkinsItem() {
 
