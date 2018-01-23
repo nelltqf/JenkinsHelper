@@ -43,7 +43,7 @@ public class JenkinsItemParser {
             if (fullName.contains("[")) {
                 object.put("failureReason", fullName.substring(fullName.indexOf('[') + 1, fullName.lastIndexOf(']')));
             }
-            object.put("isBroken", fullName.contains("stable") || fullName.contains("normal"));
+            object.put("isBroken", !(fullName.contains("stable") || fullName.contains("normal")));
         }
         return jsonArray;
     }

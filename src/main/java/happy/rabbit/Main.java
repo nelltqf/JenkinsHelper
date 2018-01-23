@@ -3,6 +3,7 @@ package happy.rabbit;
 import happy.rabbit.domain.JenkinsItem;
 import happy.rabbit.jenkins.NetworkServiceImpl;
 import happy.rabbit.parser.JenkinsItemParser;
+import happy.rabbit.statistics.StatisticsCollector;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,6 +16,7 @@ public class Main {
         String rssAll = new NetworkServiceImpl().getRssAll();
         JenkinsItemParser parser = new JenkinsItemParser();
         List<JenkinsItem> jenkinsItems = parser.parseToList(rssAll);
-        jenkinsItems.forEach(System.out::println);
+        StatisticsCollector collector = new StatisticsCollector(jenkinsItems);
+        collector.collect();
     }
 }

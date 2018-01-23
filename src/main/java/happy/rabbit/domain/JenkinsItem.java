@@ -46,7 +46,7 @@ public class JenkinsItem {
         return isBroken;
     }
 
-    public void setBroken(boolean broken) {
+    public void setIsBroken(boolean broken) {
         isBroken = broken;
     }
 

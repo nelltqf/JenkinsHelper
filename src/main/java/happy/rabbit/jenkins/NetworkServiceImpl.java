@@ -1,15 +1,7 @@
 package happy.rabbit.jenkins;
 
-
 import happy.rabbit.http.Request;
-import org.apache.http.HttpResponse;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.XML;
-import org.w3c.dom.Document;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 public class NetworkServiceImpl implements NetworkService {
 
@@ -41,14 +33,16 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     public String fillJobNameAndDescription(int buildNumber, String reason, String description) {
-        String sampleJson = "{\"displayName\":\"#" + buildNumber + " [" + reason + "]\", " +
-                "\"description\": \"" + description + "\", " +
-                "\"core:apply\": \"\", \"Jenkins-Crumb\": \"" + jenkinsCrumb + "\"}";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("displayName", "#" + buildNumber + " [" + reason + "]");
+        jsonObject.put("description", description);
+        jsonObject.put("core:apply", "");
+        jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
             return Request.post(UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
-                    .withFormField("json", sampleJson)
+                    .withFormField("json", jsonObject.toString())
                     .asString();
         } catch (Exception e) {
             // TODO logging
