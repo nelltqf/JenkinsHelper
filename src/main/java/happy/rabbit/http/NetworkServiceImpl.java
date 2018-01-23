@@ -1,6 +1,5 @@
-package happy.rabbit.jenkins;
+package happy.rabbit.http;
 
-import happy.rabbit.http.Request;
 import org.json.JSONObject;
 
 public class NetworkServiceImpl implements NetworkService {
@@ -32,11 +31,7 @@ public class NetworkServiceImpl implements NetworkService {
         }
     }
 
-    public String fillJobNameAndDescription(int buildNumber, String reason, String description) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("displayName", "#" + buildNumber + " [" + reason + "]");
-        jsonObject.put("description", description);
-        jsonObject.put("core:apply", "");
+    public String fillJobNameAndDescription(int buildNumber, JSONObject jsonObject) {
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
             return Request.post(UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))

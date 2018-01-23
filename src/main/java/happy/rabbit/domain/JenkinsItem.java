@@ -4,17 +4,27 @@ import java.time.LocalDateTime;
 
 public class JenkinsItem {
 
-    private int id;
+    private Integer id;
     private LocalDateTime published;
     private FailureReason failureReason;
     private String content;
     private boolean isBroken;
 
-    public int getId() {
+    public JenkinsItem() {
+
+    }
+
+    public JenkinsItem(int id, FailureReason failureReason, String content) {
+        this.id = id;
+        this.failureReason = failureReason;
+        this.content = content;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

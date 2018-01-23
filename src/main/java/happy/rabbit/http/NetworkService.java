@@ -1,4 +1,6 @@
-package happy.rabbit.jenkins;
+package happy.rabbit.http;
+
+import org.json.JSONObject;
 
 public interface NetworkService {
 
@@ -16,5 +18,5 @@ public interface NetworkService {
 
     String getRssAll();
 
-    String fillJobNameAndDescription(int buildNumber, String reason, String description);
+    String fillJobNameAndDescription(int buildNumber, JSONObject jsonObject);
 }

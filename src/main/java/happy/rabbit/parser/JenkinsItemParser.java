@@ -3,19 +3,22 @@ package happy.rabbit.parser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import happy.rabbit.domain.FailureReason;
 import happy.rabbit.domain.JenkinsItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class JenkinsItemParser {
 
     private ObjectMapper mapper = customMapper();
 
-    public List<JenkinsItem> parseToList(String string) {
+    public List<JenkinsItem> parseJsonToList(String string) {
         try {
             List<JenkinsItem> jenkinsItems = new ArrayList<>();
             JSONArray jsonArray = prepareJsonArray(string);
@@ -27,6 +30,30 @@ public class JenkinsItemParser {
             // TODO logging
             throw new IllegalStateException(e);
         }
+    }
+
+    public List<JenkinsItem> parseCsvToList(String csv) {
+        List<String> jenkinsItemsAsString = Arrays.asList(csv.split("\\n"));
+        // TODO Set indexes from indexLine
+        Iterator<String> iterator = jenkinsItemsAsString.iterator();
+        String indexLine = iterator.next();
+        List<JenkinsItem> jenkinsItems = new ArrayList<>();
+        while (iterator.hasNext()) {
+            jenkinsItems.add(parseOneCsvLine(iterator.next()));
+        }
+        return jenkinsItems;
+    }
+
+    private JenkinsItem parseOneCsvLine(String stringItem) {
+        int idIndex = 0;
+        int failureIndex = 1;
+        int descriptionIndex = 2;
+        String elements[] = stringItem.split(",");
+        int id = Integer.parseInt(elements[idIndex]);
+        FailureReason reason = FailureReason.valueOf(elements[failureIndex]);
+        String description = elements[descriptionIndex];
+
+        return new JenkinsItem(id, reason, description);
     }
 
     private JSONArray prepareJsonArray(String string) {
