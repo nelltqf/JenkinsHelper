@@ -1,22 +1,17 @@
 package happy.rabbit.http;
 
 import org.json.JSONObject;
+import org.springframework.context.annotation.ImportResource;
 
+@ImportResource(value = "environment.properties")
 public interface NetworkService {
 
-    //TODO move to properties
-    String BASE_URL = "http://localhost:49001/";
-    String JOB = "job/TestJob/";
-
-    String RSS_ALL = BASE_URL + JOB + "rssAll";
-    String UPDATE_DESCRIPTION = BASE_URL + JOB + "{id}/configSubmit";
-    String CRUMB = BASE_URL + "/crumbIssuer/api/json";
-
-    // TODO hide
-    String username = "admin";
-    String password = "admin";
+    String JOB = "job/";
+    String GET_RSS_ALL = "/rssAll";
+    String UPDATE_DESCRIPTION = "{id}/configSubmit";
+    String GET_CRUMB = "crumbIssuer/api/json";
 
     String getRssAll();
 
-    String fillJobNameAndDescription(int buildNumber, JSONObject jsonObject);
+    void fillJobNameAndDescription(Long buildNumber, JSONObject jsonObject);
 }

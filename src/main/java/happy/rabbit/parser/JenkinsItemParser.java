@@ -49,7 +49,7 @@ public class JenkinsItemParser {
         int failureIndex = 1;
         int descriptionIndex = 2;
         String elements[] = stringItem.split(",");
-        int id = Integer.parseInt(elements[idIndex]);
+        Long id = Long.parseLong(elements[idIndex]);
         FailureReason reason = FailureReason.valueOf(elements[failureIndex]);
         String description = elements[descriptionIndex];
 

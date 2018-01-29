@@ -6,23 +6,37 @@ public class NetworkServiceImpl implements NetworkService {
 
     private static String jenkinsCrumb;
 
-    public NetworkServiceImpl() {
+    private String baseUrl;
+    private String username;
+    private String password;
+    private String jobName;
+
+    public NetworkServiceImpl(String baseUrl, String username, String password, String jobName) {
+        this.baseUrl = baseUrl + "/";
+        this.username = username;
+        this.password = password;
+        this.jobName = "job/" + jobName + "/";
+        jenkinsCrumb = getJenkinsCrumb();
+    }
+
+    public String getJenkinsCrumb() {
         if (jenkinsCrumb == null) {
             try {
-                JSONObject crumbJson = Request.get(CRUMB)
+                JSONObject crumbJson = Request.get(baseUrl + GET_CRUMB)
                         .withBasicAuth(username, password)
                         .asJson();
-                jenkinsCrumb = crumbJson.get("crumb").toString();
+                return crumbJson.get("crumb").toString();
             } catch (Exception e) {
                 // TODO logging
                 throw new IllegalStateException(e);
             }
         }
+        return jenkinsCrumb;
     }
 
     public String getRssAll() {
         try {
-            return Request.get(RSS_ALL)
+            return Request.get(baseUrl + jobName + GET_RSS_ALL)
                     .withBasicAuth(username, password)
                     .asString();
         } catch (Exception e) {
@@ -31,10 +45,10 @@ public class NetworkServiceImpl implements NetworkService {
         }
     }
 
-    public String fillJobNameAndDescription(int buildNumber, JSONObject jsonObject) {
+    public void fillJobNameAndDescription(Long buildNumber, JSONObject jsonObject) {
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
-            return Request.post(UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))
+            Request.post(baseUrl + jobName + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
                     .withFormField("json", jsonObject.toString())

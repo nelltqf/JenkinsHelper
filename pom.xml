@@ -7,8 +7,19 @@
     <groupId>happy.rabbit</groupId>
     <artifactId>jenkins-helper</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.9.RELEASE</version>
+    </parent>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -21,14 +32,28 @@
     </build>
 
     <properties>
-        <apache.http.version>4.5.4</apache.http.version>
+        <apache.http.version>4.3.6</apache.http.version>
+        <hibernateCoreVersion>4.3.0.Final</hibernateCoreVersion>
+        <hsqldbVersion>2.2.9</hsqldbVersion>
+        <springContextVersion>4.0.5.RELEASE</springContextVersion>
+        <springORMVersion>4.0.6.RELEASE</springORMVersion>
     </properties>
+
+    <!--<dependencyManagement>-->
+        <!--<dependencies>-->
+            <!--<dependency>-->
+                <!--<groupId>org.springframework.boot</groupId>-->
+                <!--<artifactId>spring-boot-starter-data-jpa</artifactId>-->
+                <!--<version>1.5.5.RELEASE</version>-->
+            <!--</dependency>-->
+        <!--</dependencies>-->
+    <!--</dependencyManagement>-->
 
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.6</version>
+            <version>${apache.http.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -38,7 +63,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>4.3.6</version>
+            <version>${apache.http.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -70,12 +95,38 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.7.0</version>
         </dependency>
+        <!--Database-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernateCoreVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldbVersion}</version>
+        </dependency>
+        <!--Spring-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${springORMVersion}</version>
+        </dependency>
         <!--Testing-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>2.4.1</version>
         </dependency>
     </dependencies>
 
