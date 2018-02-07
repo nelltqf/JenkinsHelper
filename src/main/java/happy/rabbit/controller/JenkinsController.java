@@ -1,15 +1,20 @@
-package happy.rabbit.jenkins;
+package happy.rabbit.controller;
 
 import happy.rabbit.data.BaseDao;
 import happy.rabbit.domain.JenkinsItem;
 import happy.rabbit.http.NetworkService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RequestMapping("/")
+@RestController
 public class JenkinsController {
 
     @Autowired
@@ -18,12 +23,12 @@ public class JenkinsController {
     @Autowired
     private NetworkService networkService;
 
-    @RequestMapping("updateDescriptions")
+    @RequestMapping(value = "updateDescriptions", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateDescription(@RequestBody List<JenkinsItem> jenkinsItems) {
         jenkinsItems.forEach(this::updateDescription);
     }
 
-    @RequestMapping("updateDescription")
+    @RequestMapping(value = "updateDescription", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateDescription(@RequestBody JenkinsItem item) {
         assert item.getId() != null;
 

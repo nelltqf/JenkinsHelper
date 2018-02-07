@@ -14,7 +14,7 @@
         <constructor-arg name="jobName" value="${jobName}"/>
     </bean>
 
-    <bean id="dao" class="happy.rabbit.data.BaseDaoImpl">
+    <bean id="baseDao" class="happy.rabbit.data.BaseDaoImpl">
         <constructor-arg index="0" ref="sessionFactory"/>
     </bean>
 
@@ -25,5 +25,5 @@
 
     <context:property-placeholder location="environment.properties" />
 
-    <!--<context:component-scan base-package="happy.rabbit"/>-->
+    <context:component-scan base-package="happy.rabbit"/>
 </beans>

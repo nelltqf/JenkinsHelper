@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class BaseDaoImpl {
+public class BaseDaoImpl implements BaseDao {
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -40,7 +40,7 @@ public class BaseDaoImpl {
                 getCurrentSession().delete(member);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Can't delete element of " + type + " with id=" + id);
+            throw new IllegalStateException("Can't delete element of " + type + " with id=" + id, e);
         }
     }
 
@@ -50,10 +50,10 @@ public class BaseDaoImpl {
                 return t;
             } else {
 //                t.setId(id);
-                getCurrentSession().update(t);
+                getCurrentSession().saveOrUpdate(t);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Can't update element of " + type + " with id=" + id);
+            throw new IllegalStateException("Can't update element of " + type + " with id=" + id, e);
         }
         getCurrentSession().flush();
         return t;
