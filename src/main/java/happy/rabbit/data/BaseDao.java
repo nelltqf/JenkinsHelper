@@ -2,16 +2,14 @@ package happy.rabbit.data;
 
 import java.util.List;
 
-public interface BaseDao {
+public interface BaseDao<T> {
 
-    <T> T getItem(Class<T> type, Long id);
+    T getItem(Long id);
 
-    <T> boolean createItem(T t);
+    void deleteItem(Long id);
 
-    <T> void deleteItem(Class<T> type, Long id);
+    T saveOrUpdateItem(T t);
 
-    <T> T updateItem(Class<T> type, Long id, T t);
-
-    <T> List<T> getAllItems(String table);
+    List<T> getAllItems();
 
 }

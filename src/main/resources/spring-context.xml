@@ -14,7 +14,7 @@
         <constructor-arg name="jobName" value="${jobName}"/>
     </bean>
 
-    <bean id="baseDao" class="happy.rabbit.data.BaseDaoImpl">
+    <bean id="baseDao" class="happy.rabbit.data.JenkinsItemDao">
         <constructor-arg index="0" ref="sessionFactory"/>
     </bean>
 

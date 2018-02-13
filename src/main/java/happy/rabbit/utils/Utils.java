@@ -1,5 +1,8 @@
 package happy.rabbit.utils;
 
+import happy.rabbit.domain.JenkinsItem;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,5 +21,13 @@ public class Utils {
             }
         }
         return System.getProperty(propertyName);
+    }
+
+    public static JSONObject getJsonObjectFromJenkinsItem(JenkinsItem item) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("displayName", "#" + item.getId() + " [" + item.getFailureReason() + "]");
+        jsonObject.put("description", item.getContent());
+        jsonObject.put("core:apply", "");
+        return jsonObject;
     }
 }

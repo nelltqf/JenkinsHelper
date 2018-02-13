@@ -1,6 +1,6 @@
 package happy.rabbit.http;
 
-import org.json.JSONObject;
+import happy.rabbit.domain.JenkinsItem;
 import org.springframework.context.annotation.ImportResource;
 
 @ImportResource(value = "environment.properties")
@@ -13,5 +13,5 @@ public interface NetworkService {
 
     String getRssAll();
 
-    void fillJobNameAndDescription(Long buildNumber, JSONObject jsonObject);
+    void fillJobNameAndDescription(Long buildNumber, JenkinsItem jenkinsItem);
 }

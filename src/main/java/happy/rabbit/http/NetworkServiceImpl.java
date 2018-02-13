@@ -1,6 +1,9 @@
 package happy.rabbit.http;
 
+import happy.rabbit.domain.JenkinsItem;
 import org.json.JSONObject;
+
+import static happy.rabbit.utils.Utils.getJsonObjectFromJenkinsItem;
 
 public class NetworkServiceImpl implements NetworkService {
 
@@ -28,7 +31,7 @@ public class NetworkServiceImpl implements NetworkService {
                 return crumbJson.get("crumb").toString();
             } catch (Exception e) {
                 // TODO logging
-                throw new IllegalStateException(e);
+//                throw new IllegalStateException(e);
             }
         }
         return jenkinsCrumb;
@@ -45,7 +48,8 @@ public class NetworkServiceImpl implements NetworkService {
         }
     }
 
-    public void fillJobNameAndDescription(Long buildNumber, JSONObject jsonObject) {
+    public void fillJobNameAndDescription(Long buildNumber, JenkinsItem jenkinsItem) {
+        JSONObject jsonObject = getJsonObjectFromJenkinsItem(jenkinsItem);
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
             Request.post(baseUrl + jobName + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))
