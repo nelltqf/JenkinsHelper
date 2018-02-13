@@ -16,15 +16,16 @@ import java.util.List;
 
 public class JenkinsItemParser {
 
-    private ObjectMapper mapper = customMapper();
+    private static final ObjectMapper CUSTOM_MAPPER = customMapper();
 
-    public List<JenkinsItem> parseJsonToList(String string) {
+    public static List<JenkinsItem> parseJsonToList(String string, String jobName) {
         try {
             List<JenkinsItem> jenkinsItems = new ArrayList<>();
             JSONArray jsonArray = prepareJsonArray(string);
             for (int i = 0; i < jsonArray.length(); i++) {
-                jenkinsItems.add(mapper.readValue(jsonArray.get(i).toString(), JenkinsItem.class));
+                jenkinsItems.add(CUSTOM_MAPPER.readValue(jsonArray.get(i).toString(), JenkinsItem.class));
             }
+            jenkinsItems.forEach(jenkinsItem -> jenkinsItem.setJobName(jobName));
             return jenkinsItems;
         } catch (Exception e) {
             // TODO logging
@@ -32,7 +33,7 @@ public class JenkinsItemParser {
         }
     }
 
-    public List<JenkinsItem> parseCsvToList(String csv) {
+    public static List<JenkinsItem> parseCsvToList(String csv) {
         List<String> jenkinsItemsAsString = Arrays.asList(csv.split("\\n"));
         // TODO Set indexes from indexLine
         Iterator<String> iterator = jenkinsItemsAsString.iterator();
@@ -44,7 +45,7 @@ public class JenkinsItemParser {
         return jenkinsItems;
     }
 
-    private JenkinsItem parseOneCsvLine(String stringItem) {
+    private static JenkinsItem parseOneCsvLine(String stringItem) {
         int idIndex = 0;
         int failureIndex = 1;
         int descriptionIndex = 2;
@@ -56,7 +57,7 @@ public class JenkinsItemParser {
         return new JenkinsItem(id, reason, description);
     }
 
-    private JSONArray prepareJsonArray(String string) {
+    private static JSONArray prepareJsonArray(String string) {
         JSONArray jsonArray = XML.toJSONObject(string).getJSONObject("feed").getJSONArray("entry");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject object = (JSONObject) jsonArray.get(i);
@@ -75,7 +76,7 @@ public class JenkinsItemParser {
         return jsonArray;
     }
 
-    private ObjectMapper customMapper() {
+    private static ObjectMapper customMapper() {
         ObjectMapper mapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule());
         mapper.findAndRegisterModules();

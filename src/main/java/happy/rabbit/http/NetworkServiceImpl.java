@@ -12,13 +12,11 @@ public class NetworkServiceImpl implements NetworkService {
     private String baseUrl;
     private String username;
     private String password;
-    private String jobName;
 
-    public NetworkServiceImpl(String baseUrl, String username, String password, String jobName) {
+    public NetworkServiceImpl(String baseUrl, String username, String password) {
         this.baseUrl = baseUrl + "/";
         this.username = username;
         this.password = password;
-        this.jobName = "job/" + jobName + "/";
         jenkinsCrumb = getJenkinsCrumb();
     }
 
@@ -37,7 +35,7 @@ public class NetworkServiceImpl implements NetworkService {
         return jenkinsCrumb;
     }
 
-    public String getRssAll() {
+    public String getRssAll(String jobName) {
         try {
             return Request.get(baseUrl + jobName + GET_RSS_ALL)
                     .withBasicAuth(username, password)
@@ -48,11 +46,11 @@ public class NetworkServiceImpl implements NetworkService {
         }
     }
 
-    public void fillJobNameAndDescription(Long buildNumber, JenkinsItem jenkinsItem) {
+    public void fillJobNameAndDescription(Long buildNumber, JenkinsItem jenkinsItem, String jobName) {
         JSONObject jsonObject = getJsonObjectFromJenkinsItem(jenkinsItem);
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
-            Request.post(baseUrl + jobName + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))
+            Request.post(baseUrl + JOB + jobName + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
                     .withFormField("json", jsonObject.toString())

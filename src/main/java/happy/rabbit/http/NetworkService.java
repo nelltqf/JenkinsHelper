@@ -11,7 +11,7 @@ public interface NetworkService {
     String UPDATE_DESCRIPTION = "{id}/configSubmit";
     String GET_CRUMB = "crumbIssuer/api/json";
 
-    String getRssAll();
+    String getRssAll(String jobName);
 
-    void fillJobNameAndDescription(Long buildNumber, JenkinsItem jenkinsItem);
+    void fillJobNameAndDescription(Long buildNumber, JenkinsItem jenkinsItem, String jobName);
 }
