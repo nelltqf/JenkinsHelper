@@ -21,13 +21,27 @@ public class JenkinsController {
     @Autowired
     private NetworkService networkService;
 
-    @RequestMapping(value = "/{jobName}/getAll",
+    @RequestMapping(value = "save",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void saveJenkinsItems(@RequestBody List<JenkinsItem> jenkinsItems) {
+        jenkinsItems.forEach(baseDao::saveOrUpdateItem);
+    }
+
+    @RequestMapping(value = "/{jobName}/{jobId}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public JenkinsItem getItem(@PathVariable String jobName, @PathVariable Long jobId) {
+        return baseDao.getItem(jobName, jobId);
+    }
+
+    @RequestMapping(value = "/{jobName}/all",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public List<JenkinsItem> getItemsForJob(@PathVariable String jobName) {
         return baseDao.getAllItems()
                 .stream()
-                .filter(item -> item.getJobName().equals(jobName))
+                .filter(item -> item.getJob() != null && item.getJob().equals(jobName))
                 .collect(Collectors.toList());
     }
 
@@ -40,20 +54,36 @@ public class JenkinsController {
         return jenkinsItems;
     }
 
-    @RequestMapping(value = "save",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void saveJenkinsItems(@RequestBody List<JenkinsItem> jenkinsItems) {
-        jenkinsItems.forEach(baseDao::saveOrUpdateItem);
-    }
-
     @RequestMapping(value = "/{jobName}/updateDescriptions",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateDescription(@PathVariable String jobName, @RequestBody List<JenkinsItem> jenkinsItems) {
         jenkinsItems.forEach(item -> {
             baseDao.saveOrUpdateItem(item);
-            networkService.fillJobNameAndDescription(item.getId(), item, jobName);
+            networkService.fillJobNameAndDescription(item);
         });
+    }
+
+    @RequestMapping(value = "/errors",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    private JenkinsItem collectErrors(@RequestBody JenkinsItem item) {
+        item.setErrors(networkService.getErrors(item));
+        item.setTestJobId(networkService.findTestJobId(item));
+        baseDao.saveOrUpdateItem(item);
+        return item;
+    }
+
+    //Cron
+    public void process() {
+        List<String> jobs = baseDao.getListOfJobs();
+        jobs.forEach(this::analyzeAndUpdate);
+    }
+
+    private void analyzeAndUpdate(String jobName) {
+        List<JenkinsItem> items = loadItemsFromJobRss(jobName);
+        items.forEach(this::collectErrors);
+//        Analyzer.assignTitleAndDescription(items);
+        updateDescription(jobName, items);
     }
 }

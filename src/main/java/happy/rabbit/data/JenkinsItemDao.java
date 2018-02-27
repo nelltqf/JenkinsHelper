@@ -22,7 +22,7 @@ public class JenkinsItemDao implements BaseDao<JenkinsItem> {
     }
 
     @Override
-    public JenkinsItem getItem(Long id) {
+    public JenkinsItem getItem(String jobName, Long id) {
         try {
             return (JenkinsItem) getCurrentSession().get(thisClass, id);
         } catch (Exception e) {
@@ -45,13 +45,13 @@ public class JenkinsItemDao implements BaseDao<JenkinsItem> {
     @Override
     public JenkinsItem saveOrUpdateItem(JenkinsItem jenkinsItem) {
         try {
-            assert jenkinsItem.getId() != null;
+            assert jenkinsItem.getItemJobId() != null;
             Session session = getCurrentSession();
             session.beginTransaction();
             session.saveOrUpdate(jenkinsItem);
             session.getTransaction().commit();
         } catch (Exception e) {
-            throw new IllegalStateException("Can't update JenkinsItem with id=" + jenkinsItem.getId(), e);
+            throw new IllegalStateException("Can't update JenkinsItem with id=" + jenkinsItem.getItemJobId(), e);
         }
         getCurrentSession().flush();
         return jenkinsItem;
@@ -60,6 +60,11 @@ public class JenkinsItemDao implements BaseDao<JenkinsItem> {
     @Override
     public List<JenkinsItem> getAllItems() {
         return getCurrentSession().createQuery("from " + tableName).list();
+    }
+
+    @Override
+    public List<String> getListOfJobs() {
+        return getCurrentSession().createQuery("from jobs").list();
     }
 
     private boolean checkIfIdExists(long id) {

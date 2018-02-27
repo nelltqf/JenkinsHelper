@@ -2,38 +2,42 @@ package happy.rabbit.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity(name = "jenkins_item")
+@Table(name = "jenkins_item")
 public class JenkinsItem {
 
-    @Id
-    private Long id;
+    @EmbeddedId
+    private ItemJobId itemJobId;
+
     private FailureReason failureReason;
+
     private String content;
+
+    private Long testJobId;
+
     private boolean isBroken;
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime published;
-    private String jobName;
+
+    @OneToMany
+    private List<Test> errors;
 
     public JenkinsItem() {
 
     }
 
-    public JenkinsItem(Long id, FailureReason failureReason, String content) {
-        this.id = id;
-        this.failureReason = failureReason;
-        this.content = content;
+    public ItemJobId getItemJobId() {
+        return itemJobId;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setItemJobId(String jobName, Long id) {
+        this.itemJobId = new ItemJobId(jobName, id);
     }
 
     public LocalDateTime getPublished() {
@@ -60,12 +64,28 @@ public class JenkinsItem {
         this.failureReason = failureReason;
     }
 
-    public String getJobName() {
-        return jobName;
+    public Job getJob() {
+        return this.itemJobId.job;
     }
 
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
+    public void setJob(String jobName) {
+        this.itemJobId.job = new Job(jobName);
+    }
+
+    public Long getTestJobId() {
+        return testJobId;
+    }
+
+    public void setTestJobId(Long testJobId) {
+        this.testJobId = testJobId;
+    }
+
+    public List<Test> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<Test> errors) {
+        this.errors = errors;
     }
 
     public boolean isBroken() {
@@ -78,6 +98,38 @@ public class JenkinsItem {
 
     @Override
     public String toString() {
-        return "#" + id;
+        return "#" + itemJobId;
+    }
+
+    public void setJobName(String jobName) {
+        this.itemJobId.job.setJobName(jobName);
+    }
+
+    @Embeddable
+    public class ItemJobId implements Serializable {
+
+        @Id
+        private Long id;
+
+        @Id
+        @ManyToOne
+        private Job job;
+
+        public ItemJobId() {
+
+        }
+
+        public ItemJobId(String jobName, Long id) {
+            this.id = id;
+            this.job = new Job(jobName);
+        }
+
+        public String getJobName() {
+            return this.job.getJobName();
+        }
+
+        public Long getId() {
+            return this.id;
+        }
     }
 }

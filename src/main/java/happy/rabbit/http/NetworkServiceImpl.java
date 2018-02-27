@@ -1,7 +1,11 @@
 package happy.rabbit.http;
 
 import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Test;
 import org.json.JSONObject;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.List;
 
 import static happy.rabbit.utils.Utils.getJsonObjectFromJenkinsItem;
 
@@ -46,11 +50,12 @@ public class NetworkServiceImpl implements NetworkService {
         }
     }
 
-    public void fillJobNameAndDescription(Long buildNumber, JenkinsItem jenkinsItem, String jobName) {
-        JSONObject jsonObject = getJsonObjectFromJenkinsItem(jenkinsItem);
+    public void fillJobNameAndDescription(JenkinsItem item) {
+        JSONObject jsonObject = getJsonObjectFromJenkinsItem(item);
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
-            Request.post(baseUrl + JOB + jobName + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))
+            Request.post(baseUrl + JOB + item.getItemJobId().getJobName()
+                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(item.getItemJobId().getId())))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
                     .withFormField("json", jsonObject.toString())
@@ -59,5 +64,15 @@ public class NetworkServiceImpl implements NetworkService {
             // TODO logging
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public List<Test> getErrors(JenkinsItem jenkinsItem) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public Long findTestJobId(JenkinsItem jenkinsItem) {
+        throw new NotImplementedException();
     }
 }

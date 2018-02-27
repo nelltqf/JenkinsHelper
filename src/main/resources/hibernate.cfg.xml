@@ -14,7 +14,6 @@
         <property name="show_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
 
-        <mapping package="happy.rabbit"/>
-        <mapping class="happy.rabbit.domain.JenkinsItem"/>
+        <mapping package="happy.rabbit.domain"/>
     </session-factory>
 </hibernate-configuration>

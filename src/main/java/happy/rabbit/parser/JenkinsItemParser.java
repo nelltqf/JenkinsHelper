@@ -33,19 +33,19 @@ public class JenkinsItemParser {
         }
     }
 
-    public static List<JenkinsItem> parseCsvToList(String csv) {
+    public static List<JenkinsItem> parseCsvToList(String csv, String jobName) {
         List<String> jenkinsItemsAsString = Arrays.asList(csv.split("\\n"));
         // TODO Set indexes from indexLine
         Iterator<String> iterator = jenkinsItemsAsString.iterator();
         String indexLine = iterator.next();
         List<JenkinsItem> jenkinsItems = new ArrayList<>();
         while (iterator.hasNext()) {
-            jenkinsItems.add(parseOneCsvLine(iterator.next()));
+            jenkinsItems.add(parseOneCsvLine(iterator.next(), jobName));
         }
         return jenkinsItems;
     }
 
-    private static JenkinsItem parseOneCsvLine(String stringItem) {
+    private static JenkinsItem parseOneCsvLine(String stringItem, String jobName) {
         int idIndex = 0;
         int failureIndex = 1;
         int descriptionIndex = 2;
@@ -54,7 +54,11 @@ public class JenkinsItemParser {
         FailureReason reason = FailureReason.valueOf(elements[failureIndex]);
         String description = elements[descriptionIndex];
 
-        return new JenkinsItem(id, reason, description);
+        JenkinsItem item = new JenkinsItem();
+        item.setItemJobId(jobName, id);
+        item.setFailureReason(reason);
+        item.setContent(description);
+        return item;
     }
 
     private static JSONArray prepareJsonArray(String string) {

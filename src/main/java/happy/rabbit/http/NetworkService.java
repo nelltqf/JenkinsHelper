@@ -1,7 +1,10 @@
 package happy.rabbit.http;
 
 import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Test;
 import org.springframework.context.annotation.ImportResource;
+
+import java.util.List;
 
 @ImportResource(value = "environment.properties")
 public interface NetworkService {
@@ -13,5 +16,9 @@ public interface NetworkService {
 
     String getRssAll(String jobName);
 
-    void fillJobNameAndDescription(Long buildNumber, JenkinsItem jenkinsItem, String jobName);
+    void fillJobNameAndDescription(JenkinsItem jenkinsItem);
+
+    List<Test> getErrors(JenkinsItem jenkinsItem);
+
+    Long findTestJobId(JenkinsItem jenkinsItem);
 }

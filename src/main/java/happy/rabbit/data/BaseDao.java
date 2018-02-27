@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface BaseDao<T> {
 
-    T getItem(Long id);
+    T getItem(String jobName, Long jobId);
 
     void deleteItem(Long id);
 
@@ -12,4 +12,5 @@ public interface BaseDao<T> {
 
     List<T> getAllItems();
 
+    List<String> getListOfJobs();
 }
