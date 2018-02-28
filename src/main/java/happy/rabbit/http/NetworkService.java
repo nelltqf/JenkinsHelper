@@ -1,22 +1,24 @@
 package happy.rabbit.http;
 
-import org.json.JSONObject;
+import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Test;
+import org.springframework.context.annotation.ImportResource;
 
+import java.util.List;
+
+@ImportResource(value = "environment.properties")
 public interface NetworkService {
 
-    //TODO move to properties
-    String BASE_URL = "http://localhost:49001/";
-    String JOB = "job/TestJob/";
+    String JOB = "job/";
+    String GET_RSS_ALL = "/rssAll";
+    String UPDATE_DESCRIPTION = "{id}/configSubmit";
+    String GET_CRUMB = "crumbIssuer/api/json";
 
-    String RSS_ALL = BASE_URL + JOB + "rssAll";
-    String UPDATE_DESCRIPTION = BASE_URL + JOB + "{id}/configSubmit";
-    String CRUMB = BASE_URL + "/crumbIssuer/api/json";
+    String getRssAll(String jobName);
 
-    // TODO hide
-    String username = "admin";
-    String password = "admin";
+    void fillJobNameAndDescription(JenkinsItem jenkinsItem);
 
-    String getRssAll();
+    List<Test> getErrors(JenkinsItem jenkinsItem);
 
-    String fillJobNameAndDescription(int buildNumber, JSONObject jsonObject);
+    Long findTestJobId(JenkinsItem jenkinsItem);
 }

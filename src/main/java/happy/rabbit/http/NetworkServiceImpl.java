@@ -1,28 +1,47 @@
 package happy.rabbit.http;
 
+import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Test;
 import org.json.JSONObject;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.List;
+
+import static happy.rabbit.utils.Utils.getJsonObjectFromJenkinsItem;
 
 public class NetworkServiceImpl implements NetworkService {
 
     private static String jenkinsCrumb;
 
-    public NetworkServiceImpl() {
-        if (jenkinsCrumb == null) {
-            try {
-                JSONObject crumbJson = Request.get(CRUMB)
-                        .withBasicAuth(username, password)
-                        .asJson();
-                jenkinsCrumb = crumbJson.get("crumb").toString();
-            } catch (Exception e) {
-                // TODO logging
-                throw new IllegalStateException(e);
-            }
-        }
+    private String baseUrl;
+    private String username;
+    private String password;
+
+    public NetworkServiceImpl(String baseUrl, String username, String password) {
+        this.baseUrl = baseUrl + "/";
+        this.username = username;
+        this.password = password;
+        jenkinsCrumb = getJenkinsCrumb();
     }
 
-    public String getRssAll() {
+    public String getJenkinsCrumb() {
+        if (jenkinsCrumb == null) {
+            try {
+                JSONObject crumbJson = Request.get(baseUrl + GET_CRUMB)
+                        .withBasicAuth(username, password)
+                        .asJson();
+                return crumbJson.get("crumb").toString();
+            } catch (Exception e) {
+                // TODO logging
+//                throw new IllegalStateException(e);
+            }
+        }
+        return jenkinsCrumb;
+    }
+
+    public String getRssAll(String jobName) {
         try {
-            return Request.get(RSS_ALL)
+            return Request.get(baseUrl + jobName + GET_RSS_ALL)
                     .withBasicAuth(username, password)
                     .asString();
         } catch (Exception e) {
@@ -31,10 +50,12 @@ public class NetworkServiceImpl implements NetworkService {
         }
     }
 
-    public String fillJobNameAndDescription(int buildNumber, JSONObject jsonObject) {
+    public void fillJobNameAndDescription(JenkinsItem item) {
+        JSONObject jsonObject = getJsonObjectFromJenkinsItem(item);
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
-            return Request.post(UPDATE_DESCRIPTION.replace("{id}", String.valueOf(buildNumber)))
+            Request.post(baseUrl + JOB + item.getItemJobId().getJobName()
+                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(item.getItemJobId().getId())))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
                     .withFormField("json", jsonObject.toString())
@@ -43,5 +64,15 @@ public class NetworkServiceImpl implements NetworkService {
             // TODO logging
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public List<Test> getErrors(JenkinsItem jenkinsItem) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public Long findTestJobId(JenkinsItem jenkinsItem) {
+        throw new NotImplementedException();
     }
 }
