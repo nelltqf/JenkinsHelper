@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import happy.rabbit.domain.Build;
-import happy.rabbit.domain.FailureReason;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -51,14 +50,14 @@ public class JenkinsItemParser {
         int descriptionIndex = 2;
         String elements[] = stringItem.split(",");
         Long id = Long.parseLong(elements[idIndex]);
-        FailureReason reason = FailureReason.valueOf(elements[failureIndex]);
+        String reason = elements[failureIndex];
         String description = elements[descriptionIndex];
 
         Build item = new Build();
-        item.setId(id);
+        item.setNumber(id);
         item.setJob(jobName);
         item.setFailureReason(reason);
-        item.setContent(description);
+        item.setDescriptor(description);
         return item;
     }
 

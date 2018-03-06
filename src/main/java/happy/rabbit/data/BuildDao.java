@@ -45,13 +45,13 @@ public class BuildDao implements BaseDao<Build> {
     @Override
     public Build saveOrUpdateItem(Build jenkinsItem) {
         try {
-            assert jenkinsItem.getId() != null;
+            assert jenkinsItem.getNumber() != null;
             Session session = getCurrentSession();
             session.beginTransaction();
             session.saveOrUpdate(jenkinsItem);
             session.getTransaction().commit();
         } catch (Exception e) {
-            throw new IllegalStateException("Can't update Build with id=" + jenkinsItem.getId(), e);
+            throw new IllegalStateException("Can't update Build with number=" + jenkinsItem.getNumber(), e);
         }
         getCurrentSession().flush();
         return jenkinsItem;

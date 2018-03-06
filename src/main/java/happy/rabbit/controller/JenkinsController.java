@@ -41,7 +41,7 @@ public class JenkinsController {
     public List<Build> getItemsForJob(@PathVariable String jobName) {
         return baseDao.getAllItems()
                 .stream()
-                .filter(item -> item.getJob() != null && item.getJob().equals(jobName))
+                .filter(item -> item.getJob() != null && item.getJob().getJobName().equals(jobName))
                 .collect(Collectors.toList());
     }
 
@@ -69,7 +69,6 @@ public class JenkinsController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     private Build collectErrors(@RequestBody Build item) {
         item.setErrors(networkService.getErrors(item));
-        item.setTestJobId(networkService.findTestJobId(item));
         baseDao.saveOrUpdateItem(item);
         return item;
     }

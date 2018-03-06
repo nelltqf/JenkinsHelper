@@ -13,6 +13,8 @@ public class Job {
 
     @Id
     private String jobName;
+
+    private boolean isPipeline;
     private boolean isActive;
 
     @ManyToMany
@@ -40,5 +42,21 @@ public class Job {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public boolean isPipeline() {
+        return isPipeline;
+    }
+
+    public void setPipeline(boolean pipeline) {
+        isPipeline = pipeline;
+    }
+
+    public List<Job> getTestJobs() {
+        return testJobs;
+    }
+
+    public void setTestJobs(List<Job> testJobs) {
+        this.testJobs = testJobs;
     }
 }
