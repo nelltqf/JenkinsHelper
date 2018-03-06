@@ -3,7 +3,6 @@ package happy.rabbit.controller;
 import happy.rabbit.data.BaseDao;
 import happy.rabbit.domain.Build;
 import happy.rabbit.http.NetworkService;
-import happy.rabbit.parser.JenkinsItemParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +40,7 @@ public class JenkinsController {
     public List<Build> getItemsForJob(@PathVariable String jobName) {
         return baseDao.getAllItems()
                 .stream()
-                .filter(item -> item.getJob() != null && item.getJob().getJobName().equals(jobName))
+                .filter(item -> item.getJob() != null && item.getJob().getDisplayName().equals(jobName))
                 .collect(Collectors.toList());
     }
 
@@ -49,9 +48,10 @@ public class JenkinsController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Build> loadItemsFromJobRss(@PathVariable String jobName) {
-        List<Build> jenkinsItems = JenkinsItemParser.parseJsonToList(networkService.getRssAll(jobName), jobName);
-        jenkinsItems.forEach(baseDao::saveOrUpdateItem);
-        return jenkinsItems;
+//        List<Build> jenkinsItems = JobParser.parseJsonToListOfBuilds(networkService.getRssAll(jobName), jobName);
+//        jenkinsItems.forEach(baseDao::saveOrUpdateItem);
+//        return jenkinsItems;
+        return null;
     }
 
     @RequestMapping(value = "/{jobName}/updateDescriptions",

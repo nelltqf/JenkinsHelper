@@ -15,16 +15,16 @@ public class Build {
 
     private Long number;
 
+    @ManyToOne
     private Job job;
 
-    private String descriptor;
+    private String description;
 
-    private boolean isBroken;
+    private Result result;
 
     private String failureReason;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime published;
+    private Long timestamp;
 
     /**
      * Stores duration in ms
@@ -51,20 +51,20 @@ public class Build {
         this.number = number;
     }
 
-    public LocalDateTime getPublished() {
-        return published;
+    public Long getTimestamp() {
+        return timestamp;
     }
 
-    public void setPublished(LocalDateTime published) {
-        this.published = published;
+    public void setTimestamp(Long published) {
+        this.timestamp = published;
     }
 
-    public String getDescriptor() {
-        return descriptor;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescriptor(String content) {
-        this.descriptor = content;
+    public void setDescription(String content) {
+        this.description = content;
     }
 
     public String getFailureReason() {
@@ -99,16 +99,26 @@ public class Build {
         this.errors = errors;
     }
 
-    public boolean isBroken() {
-        return isBroken;
+    public Result getResult() {
+        return result;
     }
 
-    public void setIsBroken(boolean broken) {
-        isBroken = broken;
+    public void setResult(Result result) {
+        this.result = result;
+    }
+
+    public void setDisplayName(String displayName) {
+        if (displayName.contains("[") && displayName.contains("]")) {
+            this.failureReason = displayName.substring(displayName.indexOf('[') + 1, displayName.lastIndexOf(']'));
+        }
     }
 
     @Override
     public String toString() {
         return "#" + number;
+    }
+
+    public boolean isBroken() {
+        return result == Result.FAILURE;
     }
 }

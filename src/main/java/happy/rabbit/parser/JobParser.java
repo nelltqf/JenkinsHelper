@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import happy.rabbit.domain.Build;
+import happy.rabbit.domain.Job;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -13,19 +14,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class JenkinsItemParser {
+public class JobParser {
 
     private static final ObjectMapper CUSTOM_MAPPER = customMapper();
 
-    public static List<Build> parseJsonToList(String string, String jobName) {
+    public static List<Build> parseJsonToListOfBuilds(String json) {
         try {
-            List<Build> jenkinsItems = new ArrayList<>();
-            JSONArray jsonArray = prepareJsonArray(string);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                jenkinsItems.add(CUSTOM_MAPPER.readValue(jsonArray.get(i).toString(), Build.class));
-            }
-            jenkinsItems.forEach(jenkinsItem -> jenkinsItem.setJob(jobName));
-            return jenkinsItems;
+            Job job = CUSTOM_MAPPER.readValue(json, Job.class);
+            return job.getBuilds();
         } catch (Exception e) {
             // TODO logging
             throw new IllegalStateException(e);
@@ -57,7 +53,7 @@ public class JenkinsItemParser {
         item.setNumber(id);
         item.setJob(jobName);
         item.setFailureReason(reason);
-        item.setDescriptor(description);
+        item.setDescription(description);
         return item;
     }
 

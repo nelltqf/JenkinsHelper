@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class Utils {
@@ -26,8 +28,12 @@ public class Utils {
     public static JSONObject getJsonObjectFromJenkinsItem(Build item) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("displayName", "#" + item.getNumber() + " [" + item.getFailureReason() + "]");
-        jsonObject.put("description", item.getDescriptor());
+        jsonObject.put("description", item.getDescription());
         jsonObject.put("core:apply", "");
         return jsonObject;
+    }
+
+    public static String readFileToString(String fileName) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(fileName)));
     }
 }

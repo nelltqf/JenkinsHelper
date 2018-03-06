@@ -1,10 +1,7 @@
 package happy.rabbit.domain;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity(name = "job")
@@ -12,10 +9,13 @@ import java.util.List;
 public class Job {
 
     @Id
-    private String jobName;
+    private String displayName;
 
     private boolean isPipeline;
     private boolean isActive;
+
+    @OneToMany
+    private List<Build> builds;
 
     @ManyToMany
     private List<Job> testJobs;
@@ -24,16 +24,16 @@ public class Job {
 
     }
 
-    public Job(String jobName) {
-        this.jobName = jobName;
+    public Job(String displayName) {
+        this.displayName = displayName;
     }
 
-    public String getJobName() {
-        return jobName;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
+    public void setDisplayName(String jobName) {
+        this.displayName = jobName;
     }
 
     public boolean isActive() {
@@ -58,5 +58,13 @@ public class Job {
 
     public void setTestJobs(List<Job> testJobs) {
         this.testJobs = testJobs;
+    }
+
+    public List<Build> getBuilds() {
+        return builds;
+    }
+
+    public void setBuilds(List<Build> builds) {
+        this.builds = builds;
     }
 }

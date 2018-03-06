@@ -54,7 +54,7 @@ public class NetworkServiceImpl implements NetworkService {
         JSONObject jsonObject = getJsonObjectFromJenkinsItem(item);
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
-            Request.post(baseUrl + JOB + item.getJob().getJobName()
+            Request.post(baseUrl + JOB + item.getJob().getDisplayName()
                     + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(item.getNumber())))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
