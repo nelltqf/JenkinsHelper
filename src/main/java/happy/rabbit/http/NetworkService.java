@@ -1,6 +1,6 @@
 package happy.rabbit.http;
 
-import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Test;
 import org.springframework.context.annotation.ImportResource;
 
@@ -16,9 +16,9 @@ public interface NetworkService {
 
     String getRssAll(String jobName);
 
-    void fillJobNameAndDescription(JenkinsItem jenkinsItem);
+    void fillJobNameAndDescription(Build jenkinsItem);
 
-    List<Test> getErrors(JenkinsItem jenkinsItem);
+    List<Test> getErrors(Build jenkinsItem);
 
-    Long findTestJobId(JenkinsItem jenkinsItem);
+    Long findTestJobId(Build jenkinsItem);
 }

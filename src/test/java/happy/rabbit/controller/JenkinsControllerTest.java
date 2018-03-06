@@ -1,7 +1,7 @@
 package happy.rabbit.controller;
 
 import happy.rabbit.data.BaseDao;
-import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Build;
 import happy.rabbit.http.NetworkService;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,14 +39,14 @@ public class JenkinsControllerTest {
                 .getAllItems();
     }
 
-    private List<JenkinsItem> listOfItems() {
+    private List<Build> listOfItems() {
         return new ArrayList<>(Arrays.asList(someJenkinsItem(), anotherJobJenkinsItem(1, 1)));
     }
 
     @Test
     public void testSavingItems() {
-        JenkinsItem item = someJenkinsItem();
-        List<JenkinsItem> items = new ArrayList<>();
+        Build item = someJenkinsItem();
+        List<Build> items = new ArrayList<>();
         items.add(item);
         jenkinsController.saveJenkinsItems(items);
         Mockito.verify(baseDao).saveOrUpdateItem(item);
@@ -63,16 +63,12 @@ public class JenkinsControllerTest {
         jenkinsController.getItemsForJob(JOB_NAME);
     }
 
-    private JenkinsItem someJenkinsItem() {
-        JenkinsItem item = new JenkinsItem();
-        item.setItemJobId(JOB_NAME, ID);
-        return null;
+    private Build someJenkinsItem() {
+        return new Build(JOB_NAME, ID);
     }
 
-    private JenkinsItem anotherJobJenkinsItem(int nextJob, int nextId) {
-        JenkinsItem item = new JenkinsItem();
-        item.setItemJobId(JOB_NAME + nextJob, ID + nextId);
-        return null;
+    private Build anotherJobJenkinsItem(int nextJob, int nextId) {
+        return new Build(JOB_NAME + nextJob, ID + nextId);
     }
 
 }

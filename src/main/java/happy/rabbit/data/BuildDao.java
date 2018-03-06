@@ -1,6 +1,6 @@
 package happy.rabbit.data;
 
-import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Build;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -9,24 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class JenkinsItemDao implements BaseDao<JenkinsItem> {
+public class BuildDao implements BaseDao<Build> {
 
     @Autowired
     private SessionFactory sessionFactory;
 
-    private Class thisClass = JenkinsItem.class;
-    private String tableName = "jenkins_item";
+    private Class thisClass = Build.class;
+    private String tableName = "build";
 
-    public JenkinsItemDao(SessionFactory sessionFactory) {
+    public BuildDao(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public JenkinsItem getItem(String jobName, Long id) {
+    public Build getItem(String jobName, Long id) {
         try {
-            return (JenkinsItem) getCurrentSession().get(thisClass, id);
+            return (Build) getCurrentSession().get(thisClass, id);
         } catch (Exception e) {
-            throw new IllegalStateException("Can't find JenkinsItem with id = " + id, e);
+            throw new IllegalStateException("Can't find Build with id = " + id, e);
         }
     }
 
@@ -34,31 +34,31 @@ public class JenkinsItemDao implements BaseDao<JenkinsItem> {
     public void deleteItem(Long id) {
         try {
             if (checkIfIdExists(id)) {
-                JenkinsItem member = (JenkinsItem) getCurrentSession().get(thisClass, id);
+                Build member = (Build) getCurrentSession().get(thisClass, id);
                 getCurrentSession().delete(member);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Can't delete JenkinsItem with id=" + id, e);
+            throw new IllegalStateException("Can't delete Build with id=" + id, e);
         }
     }
 
     @Override
-    public JenkinsItem saveOrUpdateItem(JenkinsItem jenkinsItem) {
+    public Build saveOrUpdateItem(Build jenkinsItem) {
         try {
-            assert jenkinsItem.getItemJobId() != null;
+            assert jenkinsItem.getId() != null;
             Session session = getCurrentSession();
             session.beginTransaction();
             session.saveOrUpdate(jenkinsItem);
             session.getTransaction().commit();
         } catch (Exception e) {
-            throw new IllegalStateException("Can't update JenkinsItem with id=" + jenkinsItem.getItemJobId(), e);
+            throw new IllegalStateException("Can't update Build with id=" + jenkinsItem.getId(), e);
         }
         getCurrentSession().flush();
         return jenkinsItem;
     }
 
     @Override
-    public List<JenkinsItem> getAllItems() {
+    public List<Build> getAllItems() {
         return getCurrentSession().createQuery("from " + tableName).list();
     }
 

@@ -3,7 +3,9 @@ package happy.rabbit.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity(name = "job")
 @Table(name = "job")
@@ -12,6 +14,9 @@ public class Job {
     @Id
     private String jobName;
     private boolean isActive;
+
+    @ManyToMany
+    private List<Job> testJobs;
 
     public Job() {
 

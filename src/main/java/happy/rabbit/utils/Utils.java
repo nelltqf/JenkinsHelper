@@ -1,6 +1,6 @@
 package happy.rabbit.utils;
 
-import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Build;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -23,9 +23,9 @@ public class Utils {
         return System.getProperty(propertyName);
     }
 
-    public static JSONObject getJsonObjectFromJenkinsItem(JenkinsItem item) {
+    public static JSONObject getJsonObjectFromJenkinsItem(Build item) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("displayName", "#" + item.getItemJobId() + " [" + item.getFailureReason() + "]");
+        jsonObject.put("displayName", "#" + item.getId() + " [" + item.getFailureReason() + "]");
         jsonObject.put("description", item.getContent());
         jsonObject.put("core:apply", "");
         return jsonObject;

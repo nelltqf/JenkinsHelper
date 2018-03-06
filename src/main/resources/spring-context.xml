@@ -13,7 +13,7 @@
         <constructor-arg name="password" value="${password}"/>
     </bean>
 
-    <bean id="baseDao" class="happy.rabbit.data.JenkinsItemDao">
+    <bean id="baseDao" class="happy.rabbit.data.BuildDao">
         <constructor-arg index="0" ref="sessionFactory"/>
     </bean>
 

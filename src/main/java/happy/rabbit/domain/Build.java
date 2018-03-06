@@ -7,12 +7,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity(name = "jenkins_item")
-@Table(name = "jenkins_item")
-public class JenkinsItem {
+@Entity(name = "build")
+@Table(name = "build")
+public class Build {
 
-    @EmbeddedId
-    private ItemJobId itemJobId;
+    @Id
+    private Long number;
+
+    private Long id;
 
     private FailureReason failureReason;
 
@@ -22,23 +24,39 @@ public class JenkinsItem {
 
     private boolean isBroken;
 
+    private Job job;
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime published;
 
     @OneToMany
     private List<Test> errors;
 
-    public JenkinsItem() {
+    public Build() {
 
     }
 
-    public ItemJobId getItemJobId() {
-        return itemJobId;
+    public Build(String jobName, Long id) {
+        this.job = new Job(jobName);
+        this.id = id;
     }
 
-    public void setItemJobId(String jobName, Long id) {
-        this.itemJobId = new ItemJobId(jobName, id);
+    public Long getNumber() {
+        return number;
     }
+
+    public void setNumber(Long number) {
+        this.number = number;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 
     public LocalDateTime getPublished() {
         return published;
@@ -65,11 +83,11 @@ public class JenkinsItem {
     }
 
     public Job getJob() {
-        return this.itemJobId.job;
+        return job;
     }
 
     public void setJob(String jobName) {
-        this.itemJobId.job = new Job(jobName);
+        this.job = new Job(jobName);
     }
 
     public Long getTestJobId() {
@@ -98,38 +116,6 @@ public class JenkinsItem {
 
     @Override
     public String toString() {
-        return "#" + itemJobId;
-    }
-
-    public void setJobName(String jobName) {
-        this.itemJobId.job.setJobName(jobName);
-    }
-
-    @Embeddable
-    public class ItemJobId implements Serializable {
-
-        @Id
-        private Long id;
-
-        @Id
-        @ManyToOne
-        private Job job;
-
-        public ItemJobId() {
-
-        }
-
-        public ItemJobId(String jobName, Long id) {
-            this.id = id;
-            this.job = new Job(jobName);
-        }
-
-        public String getJobName() {
-            return this.job.getJobName();
-        }
-
-        public Long getId() {
-            return this.id;
-        }
+        return "#" + id;
     }
 }

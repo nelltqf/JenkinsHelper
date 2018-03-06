@@ -1,6 +1,6 @@
 package happy.rabbit.http;
 
-import happy.rabbit.domain.JenkinsItem;
+import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Test;
 import org.json.JSONObject;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -41,7 +41,7 @@ public class NetworkServiceImpl implements NetworkService {
 
     public String getRssAll(String jobName) {
         try {
-            return Request.get(baseUrl + jobName + GET_RSS_ALL)
+            return Request.get(baseUrl + JOB + jobName + GET_RSS_ALL)
                     .withBasicAuth(username, password)
                     .asString();
         } catch (Exception e) {
@@ -50,12 +50,12 @@ public class NetworkServiceImpl implements NetworkService {
         }
     }
 
-    public void fillJobNameAndDescription(JenkinsItem item) {
+    public void fillJobNameAndDescription(Build item) {
         JSONObject jsonObject = getJsonObjectFromJenkinsItem(item);
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
-            Request.post(baseUrl + JOB + item.getItemJobId().getJobName()
-                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(item.getItemJobId().getId())))
+            Request.post(baseUrl + JOB + item.getJob().getJobName()
+                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(item.getId())))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
                     .withFormField("json", jsonObject.toString())
@@ -67,12 +67,12 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
-    public List<Test> getErrors(JenkinsItem jenkinsItem) {
+    public List<Test> getErrors(Build jenkinsItem) {
         throw new NotImplementedException();
     }
 
     @Override
-    public Long findTestJobId(JenkinsItem jenkinsItem) {
+    public Long findTestJobId(Build jenkinsItem) {
         throw new NotImplementedException();
     }
 }

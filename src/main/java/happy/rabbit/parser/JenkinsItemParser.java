@@ -3,8 +3,8 @@ package happy.rabbit.parser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import happy.rabbit.domain.Build;
 import happy.rabbit.domain.FailureReason;
-import happy.rabbit.domain.JenkinsItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -18,14 +18,14 @@ public class JenkinsItemParser {
 
     private static final ObjectMapper CUSTOM_MAPPER = customMapper();
 
-    public static List<JenkinsItem> parseJsonToList(String string, String jobName) {
+    public static List<Build> parseJsonToList(String string, String jobName) {
         try {
-            List<JenkinsItem> jenkinsItems = new ArrayList<>();
+            List<Build> jenkinsItems = new ArrayList<>();
             JSONArray jsonArray = prepareJsonArray(string);
             for (int i = 0; i < jsonArray.length(); i++) {
-                jenkinsItems.add(CUSTOM_MAPPER.readValue(jsonArray.get(i).toString(), JenkinsItem.class));
+                jenkinsItems.add(CUSTOM_MAPPER.readValue(jsonArray.get(i).toString(), Build.class));
             }
-            jenkinsItems.forEach(jenkinsItem -> jenkinsItem.setJobName(jobName));
+            jenkinsItems.forEach(jenkinsItem -> jenkinsItem.setJob(jobName));
             return jenkinsItems;
         } catch (Exception e) {
             // TODO logging
@@ -33,19 +33,19 @@ public class JenkinsItemParser {
         }
     }
 
-    public static List<JenkinsItem> parseCsvToList(String csv, String jobName) {
+    public static List<Build> parseCsvToList(String csv, String jobName) {
         List<String> jenkinsItemsAsString = Arrays.asList(csv.split("\\n"));
         // TODO Set indexes from indexLine
         Iterator<String> iterator = jenkinsItemsAsString.iterator();
         String indexLine = iterator.next();
-        List<JenkinsItem> jenkinsItems = new ArrayList<>();
+        List<Build> jenkinsItems = new ArrayList<>();
         while (iterator.hasNext()) {
             jenkinsItems.add(parseOneCsvLine(iterator.next(), jobName));
         }
         return jenkinsItems;
     }
 
-    private static JenkinsItem parseOneCsvLine(String stringItem, String jobName) {
+    private static Build parseOneCsvLine(String stringItem, String jobName) {
         int idIndex = 0;
         int failureIndex = 1;
         int descriptionIndex = 2;
@@ -54,8 +54,9 @@ public class JenkinsItemParser {
         FailureReason reason = FailureReason.valueOf(elements[failureIndex]);
         String description = elements[descriptionIndex];
 
-        JenkinsItem item = new JenkinsItem();
-        item.setItemJobId(jobName, id);
+        Build item = new Build();
+        item.setId(id);
+        item.setJob(jobName);
         item.setFailureReason(reason);
         item.setContent(description);
         return item;
