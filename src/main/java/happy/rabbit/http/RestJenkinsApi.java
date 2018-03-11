@@ -3,13 +3,17 @@ package happy.rabbit.http;
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Test;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
 import static happy.rabbit.utils.Utils.getJsonObjectFromJenkinsItem;
 
-public class NetworkServiceImpl implements NetworkService {
+public class RestJenkinsApi implements JenkinsApi {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestJenkinsApi.class);
 
     private static String jenkinsCrumb;
 
@@ -17,7 +21,7 @@ public class NetworkServiceImpl implements NetworkService {
     private String username;
     private String password;
 
-    public NetworkServiceImpl(String baseUrl, String username, String password) {
+    public RestJenkinsApi(String baseUrl, String username, String password) {
         this.baseUrl = baseUrl + "/";
         this.username = username;
         this.password = password;
@@ -32,8 +36,7 @@ public class NetworkServiceImpl implements NetworkService {
                         .asJson();
                 return crumbJson.get("crumb").toString();
             } catch (Exception e) {
-                // TODO logging
-//                throw new IllegalStateException(e);
+                LOGGER.error("Exception during fetching crumb from Jenkins", e);
             }
         }
         return jenkinsCrumb;
@@ -45,23 +48,23 @@ public class NetworkServiceImpl implements NetworkService {
                     .withBasicAuth(username, password)
                     .asString();
         } catch (Exception e) {
-            // TODO logging
+            LOGGER.error("Exception during getting job " + jobName + " from Jenkins", e);
             throw new IllegalStateException(e);
         }
     }
 
-    public void fillJobNameAndDescription(Build item) {
-        JSONObject jsonObject = getJsonObjectFromJenkinsItem(item);
+    public void fillJobNameAndDescription(Build build) {
+        JSONObject jsonObject = getJsonObjectFromJenkinsItem(build);
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
-            Request.post(baseUrl + JOB + item.getJob().getDisplayName()
-                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(item.getNumber())))
+            Request.post(baseUrl + JOB + build.getJob().getDisplayName()
+                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(build.getNumber())))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
                     .withFormField("json", jsonObject.toString())
                     .asString();
         } catch (Exception e) {
-            // TODO logging
+            LOGGER.error("Exception during getting build " + build + " from Jenkins", e);
             throw new IllegalStateException(e);
         }
     }

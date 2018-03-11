@@ -4,7 +4,7 @@ import happy.rabbit.data.Dao;
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
 import happy.rabbit.domain.Test;
-import happy.rabbit.http.NetworkService;
+import happy.rabbit.http.JenkinsApi;
 import happy.rabbit.parser.Parser;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class JenkinsService {
     private Dao<Build> baseDao;
 
     @Autowired
-    private NetworkService networkService;
+    private JenkinsApi jenkinsApi;
 
 
     public void saveBuilds(List<Build> jenkinsItems) {
@@ -35,19 +35,19 @@ public class JenkinsService {
     }
 
     public Job loadJob(String jobName) {
-        String json = networkService.getJobJson(jobName);
+        String json = jenkinsApi.getJobJson(jobName);
         return Parser.parseJson(json, Job.class);
     }
 
     public void updateJenkins(List<Build> jenkinsItems, String jobName) {
         jenkinsItems.forEach(item -> {
             baseDao.saveOrUpdateItem(item);
-            networkService.fillJobNameAndDescription(item);
+            jenkinsApi.fillJobNameAndDescription(item);
         });
     }
 
     public List<Test> getErrorsForPipelineRun(String jobName, Long id) {
-//        item.setErrors(networkService.getErrors(item));
+//        item.setErrors(jenkinsApi.getErrors(item));
 //        baseDao.saveOrUpdateItem(item);
 //        return item;
         throw new NotImplementedException("Can't get errors from pipeline yet");
@@ -57,7 +57,7 @@ public class JenkinsService {
         // Get all available pipelines from DB
         // For each pipeline get test jobs
         // For each test job get builds with empty description/error list
-        // For each build get errors from api
+        // For each build get errors from jenkinsApi
         // Try to analyze
         // Save to DB
         // Update descriptions

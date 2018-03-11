@@ -6,6 +6,7 @@ import java.util.List;
 @Entity
 public class Build {
 
+    // TODO consider using embeddedId
     @Id
     @GeneratedValue
     private Long id;
@@ -28,7 +29,7 @@ public class Build {
      */
     private Long duration;
 
-    @OneToMany
+    @ManyToMany
     private List<Test> errors;
 
     public Build() {
@@ -112,7 +113,7 @@ public class Build {
 
     @Override
     public String toString() {
-        return "#" + number;
+        return job.getDisplayName() + " #" + number;
     }
 
     public boolean isBroken() {

@@ -11,12 +11,16 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
 public class Request {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Request.class);
 
     // TODO should this client be static? Threadsafe?
     private HttpClient client = HttpClientBuilder.create().build();
@@ -68,7 +72,7 @@ public class Request {
             InputStream inputStream = response.getEntity().getContent();
             return new String(IOUtils.toByteArray(inputStream));
         } catch (IOException e) {
-            // TODO logging
+            LOGGER.error("Error while executing request", e);
             throw new IllegalStateException(e);
         }
     }
@@ -86,7 +90,7 @@ public class Request {
             }
             return client.execute(requestBase);
         } catch (IOException e) {
-            // TODO logging
+            LOGGER.error("Error while executing request", e);
             throw new IllegalStateException(e);
         }
     }

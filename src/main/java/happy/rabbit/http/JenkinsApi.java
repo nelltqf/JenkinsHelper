@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ImportResource;
 import java.util.List;
 
 @ImportResource(value = "environment.properties")
-public interface NetworkService {
+public interface JenkinsApi {
 
     String JOB = "job/";
     String GET_JOB_JSON = "/api/json";

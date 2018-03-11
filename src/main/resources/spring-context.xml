@@ -7,7 +7,7 @@
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="networkService" class="happy.rabbit.http.NetworkServiceImpl">
+    <bean id="networkService" class="happy.rabbit.http.RestJenkinsApi">
         <constructor-arg name="baseUrl" value="${baseUrl}"/>
         <constructor-arg name="username" value="${username}"/>
         <constructor-arg name="password" value="${password}"/>

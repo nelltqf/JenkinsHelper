@@ -2,7 +2,7 @@ package happy.rabbit.controller;
 
 import happy.rabbit.data.Dao;
 import happy.rabbit.domain.Build;
-import happy.rabbit.http.NetworkService;
+import happy.rabbit.http.JenkinsApi;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -24,7 +24,7 @@ public class JenkinsControllerTest {
     @Mock
     private Dao baseDao;
     @Mock
-    private NetworkService networkService;
+    private JenkinsApi jenkinsApi;
     @InjectMocks
     private JenkinsController jenkinsController;
 
