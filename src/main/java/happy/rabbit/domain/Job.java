@@ -12,6 +12,7 @@ public class Job {
     private String displayName;
 
     private boolean isPipeline;
+
     private boolean isActive = true;
 
     @OneToMany

@@ -8,6 +8,7 @@ public class Test {
 
     @Id
     private String testName;
+
     private String errorMessage;
 
     public String getTestName() {
