@@ -33,7 +33,11 @@ public class Utils {
         return jsonObject;
     }
 
-    public static String readFileToString(String fileName) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(fileName)));
+    public static String readFileToString(String fileName) {
+        try {
+            return new String(Files.readAllBytes(Paths.get(fileName)));
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }

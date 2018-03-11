@@ -8,11 +8,13 @@ import java.util.List;
 @Table(name = "job")
 public class Job {
 
+    private static final String PIPELINE = "WorkflowJob";
+
     @Id
     private String displayName;
 
     private boolean isPipeline;
-    private boolean isActive;
+    private boolean isActive = true;
 
     @OneToMany
     private List<Build> builds;
@@ -66,5 +68,9 @@ public class Job {
 
     public void setBuilds(List<Build> builds) {
         this.builds = builds;
+    }
+
+    public void set_class(String _class) {
+        isPipeline = _class.endsWith(PIPELINE);
     }
 }
