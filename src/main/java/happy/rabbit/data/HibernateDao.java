@@ -1,6 +1,7 @@
 package happy.rabbit.data;
 
 import happy.rabbit.domain.Build;
+import happy.rabbit.domain.Job;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class BuildDao implements BaseDao<Build> {
+public class HibernateDao implements Dao<Build> {
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -17,7 +18,7 @@ public class BuildDao implements BaseDao<Build> {
     private Class thisClass = Build.class;
     private String tableName = "build";
 
-    public BuildDao(SessionFactory sessionFactory) {
+    public HibernateDao(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -65,6 +66,11 @@ public class BuildDao implements BaseDao<Build> {
     @Override
     public List<String> getListOfJobs() {
         return getCurrentSession().createQuery("from jobs").list();
+    }
+
+    @Override
+    public Job getJob(String jobName) {
+        return null;
     }
 
     private boolean checkIfIdExists(long id) {

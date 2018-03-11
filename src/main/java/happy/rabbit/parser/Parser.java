@@ -6,9 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JobParser {
+public class Parser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
 
     private static final ObjectMapper CUSTOM_MAPPER = customMapper();
 

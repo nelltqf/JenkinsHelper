@@ -39,9 +39,9 @@ public class NetworkServiceImpl implements NetworkService {
         return jenkinsCrumb;
     }
 
-    public String getRssAll(String jobName) {
+    public String getJobJson(String jobName) {
         try {
-            return Request.get(baseUrl + JOB + jobName + GET_RSS_ALL)
+            return Request.get(baseUrl + JOB + jobName + GET_JOB_JSON)
                     .withBasicAuth(username, password)
                     .asString();
         } catch (Exception e) {

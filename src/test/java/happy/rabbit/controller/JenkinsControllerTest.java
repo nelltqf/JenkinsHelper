@@ -1,6 +1,6 @@
 package happy.rabbit.controller;
 
-import happy.rabbit.data.BaseDao;
+import happy.rabbit.data.Dao;
 import happy.rabbit.domain.Build;
 import happy.rabbit.http.NetworkService;
 import org.junit.Before;
@@ -14,13 +14,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SuppressWarnings("unchecked")
 public class JenkinsControllerTest {
 
     private static final String JOB_NAME = "someJob";
     private static final Long ID = 123L;
     @Mock
-    private BaseDao baseDao;
+    private Dao baseDao;
     @Mock
     private NetworkService networkService;
     @InjectMocks
@@ -48,8 +50,10 @@ public class JenkinsControllerTest {
         Build item = someJenkinsItem();
         List<Build> items = new ArrayList<>();
         items.add(item);
-        jenkinsController.saveJenkinsItems(items);
+        jenkinsController.saveJenkinsBuilds(items);
         Mockito.verify(baseDao).saveOrUpdateItem(item);
+        assertThat(baseDao.getItem(item.getJob().getDisplayName(), item.getNumber()))
+                .isEqualToComparingFieldByField(item);
     }
 
     @Test
@@ -60,7 +64,7 @@ public class JenkinsControllerTest {
 
     @Test
     public void testItemsForJob() {
-        jenkinsController.getItemsForJob(JOB_NAME);
+        jenkinsController.getBuildsForJob(JOB_NAME);
     }
 
     private Build someJenkinsItem() {

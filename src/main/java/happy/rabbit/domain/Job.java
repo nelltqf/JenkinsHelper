@@ -1,11 +1,9 @@
 package happy.rabbit.domain;
 
-
 import javax.persistence.*;
 import java.util.List;
 
-@Entity(name = "job")
-@Table(name = "job")
+@Entity
 public class Job {
 
     private static final String PIPELINE = "WorkflowJob";

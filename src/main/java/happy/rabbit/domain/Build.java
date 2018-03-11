@@ -1,13 +1,12 @@
 package happy.rabbit.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.List;
 
-@Entity(name = "build")
-@Table(name = "build")
+@Entity
 public class Build {
 
     @Id

@@ -10,11 +10,11 @@ import java.util.List;
 public interface NetworkService {
 
     String JOB = "job/";
-    String GET_RSS_ALL = "/rssAll";
+    String GET_JOB_JSON = "/api/json";
     String UPDATE_DESCRIPTION = "{id}/configSubmit";
     String GET_CRUMB = "crumbIssuer/api/json";
 
-    String getRssAll(String jobName);
+    String getJobJson(String jobName);
 
     void fillJobNameAndDescription(Build jenkinsItem);
 

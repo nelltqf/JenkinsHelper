@@ -1,88 +1,66 @@
 package happy.rabbit.controller;
 
-import happy.rabbit.data.BaseDao;
 import happy.rabbit.domain.Build;
-import happy.rabbit.http.NetworkService;
+import happy.rabbit.domain.Job;
+import happy.rabbit.domain.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequestMapping("/")
 @RestController
 public class JenkinsController {
 
     @Autowired
-    private BaseDao<Build> baseDao;
-
-    @Autowired
-    private NetworkService networkService;
+    private JenkinsService jenkinsService;
 
     @RequestMapping(value = "save",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void saveJenkinsItems(@RequestBody List<Build> jenkinsItems) {
-        jenkinsItems.forEach(baseDao::saveOrUpdateItem);
+    public void saveJenkinsBuilds(@RequestBody List<Build> jenkinsItems) {
+        jenkinsService.saveBuilds(jenkinsItems);
     }
 
     @RequestMapping(value = "/{jobName}/{jobId}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Build getItem(@PathVariable String jobName, @PathVariable Long jobId) {
-        return baseDao.getItem(jobName, jobId);
+        return jenkinsService.getBuild(jobName, jobId);
     }
 
     @RequestMapping(value = "/{jobName}/all",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Build> getItemsForJob(@PathVariable String jobName) {
-        return baseDao.getAllItems()
-                .stream()
-                .filter(item -> item.getJob() != null && item.getJob().getDisplayName().equals(jobName))
-                .collect(Collectors.toList());
+    public List<Build> getBuildsForJob(@PathVariable String jobName) {
+        return jenkinsService.getJob(jobName).getBuilds();
     }
 
-    @RequestMapping(value = "/{jobName}/loadFromRss",
+    @RequestMapping(value = "/{jobName}/load",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Build> loadItemsFromJobRss(@PathVariable String jobName) {
-//        List<Build> jenkinsItems = JobParser.parseJsonToListOfBuilds(networkService.getRssAll(jobName), jobName);
-//        jenkinsItems.forEach(baseDao::saveOrUpdateItem);
-//        return jenkinsItems;
-        return null;
+    public List<Build> loadJobWithBuilds(@PathVariable String jobName) {
+        Job job = jenkinsService.loadJob(jobName);
+        return job.getBuilds();
     }
 
     @RequestMapping(value = "/{jobName}/updateDescriptions",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateDescription(@PathVariable String jobName, @RequestBody List<Build> jenkinsItems) {
-        jenkinsItems.forEach(item -> {
-            baseDao.saveOrUpdateItem(item);
-            networkService.fillJobNameAndDescription(item);
-        });
+        jenkinsService.updateJenkins(jenkinsItems, jobName);
     }
 
-    @RequestMapping(value = "/errors",
+    @RequestMapping(value = "/{jobName}/{id}/errors",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    private Build collectErrors(@RequestBody Build item) {
-        item.setErrors(networkService.getErrors(item));
-        baseDao.saveOrUpdateItem(item);
-        return item;
+    private List<Test> collectErrors(@PathVariable String jobName, @PathVariable Long id) {
+        return jenkinsService.getErrorsForPipelineRun(jobName, id);
     }
 
     //Cron
-    public void process() {
-        List<String> jobs = baseDao.getListOfJobs();
-        jobs.forEach(this::analyzeAndUpdate);
-    }
-
-    private void analyzeAndUpdate(String jobName) {
-        List<Build> items = loadItemsFromJobRss(jobName);
-        items.forEach(this::collectErrors);
-//        Analyzer.assignTitleAndDescription(items);
-        updateDescription(jobName, items);
+    public void processAllActivePipelines() {
+        jenkinsService.analyzeAndUpdateAllActivePipelines();
     }
 }

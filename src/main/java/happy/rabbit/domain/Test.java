@@ -2,10 +2,8 @@ package happy.rabbit.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity(name = "test")
-@Table(name = "test")
+@Entity
 public class Test {
 
     @Id

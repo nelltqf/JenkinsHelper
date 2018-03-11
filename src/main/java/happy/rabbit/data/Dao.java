@@ -1,8 +1,10 @@
 package happy.rabbit.data;
 
+import happy.rabbit.domain.Job;
+
 import java.util.List;
 
-public interface BaseDao<T> {
+public interface Dao<T> {
 
     T getItem(String jobName, Long jobId);
 
@@ -13,4 +15,6 @@ public interface BaseDao<T> {
     List<T> getAllItems();
 
     List<String> getListOfJobs();
+
+    Job getJob(String jobName);
 }
