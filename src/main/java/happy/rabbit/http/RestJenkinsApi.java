@@ -1,13 +1,10 @@
 package happy.rabbit.http;
 
 import happy.rabbit.domain.Build;
-import happy.rabbit.domain.Test;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.util.List;
 
 import static happy.rabbit.utils.Utils.getJsonObjectFromJenkinsItem;
 
@@ -70,8 +67,15 @@ public class RestJenkinsApi implements JenkinsApi {
     }
 
     @Override
-    public List<Test> getErrors(Build jenkinsItem) {
-        throw new NotImplementedException();
+    public String getErrors(Build build) {
+        try {
+            return Request.get(baseUrl + JOB + build.getJob() + "/" + build.getNumber() + GET_ERRORS)
+                    .withBasicAuth(username, password)
+                    .asString();
+        } catch (Exception e) {
+            LOGGER.error("Exception during getting test report for " + build + " from Jenkins", e);
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

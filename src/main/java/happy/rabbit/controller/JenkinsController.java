@@ -16,6 +16,13 @@ public class JenkinsController {
     @Autowired
     private JenkinsService jenkinsService;
 
+    @RequestMapping(value = "cron",
+            method = RequestMethod.GET)
+    //Cron
+    public void processAllActivePipelines() {
+        jenkinsService.analyzeAndUpdateAllActivePipelines();
+    }
+
     @RequestMapping(value = "save",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -34,7 +41,7 @@ public class JenkinsController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Build> getBuildsForJob(@PathVariable String jobName) {
-        return jenkinsService.getJob(jobName).getBuilds();
+        return jenkinsService.getJobFromDB(jobName).getBuilds();
     }
 
     @RequestMapping(value = "/{jobName}/load",
@@ -57,10 +64,5 @@ public class JenkinsController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     private List<Test> collectErrors(@PathVariable String jobName, @PathVariable Long id) {
         return jenkinsService.getErrorsForPipelineRun(jobName, id);
-    }
-
-    //Cron
-    public void processAllActivePipelines() {
-        jenkinsService.analyzeAndUpdateAllActivePipelines();
     }
 }

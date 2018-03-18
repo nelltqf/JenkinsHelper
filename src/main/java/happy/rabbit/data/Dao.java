@@ -1,20 +1,18 @@
 package happy.rabbit.data;
 
-import happy.rabbit.domain.Job;
+import happy.rabbit.domain.*;
 
 import java.util.List;
 
-public interface Dao<T> {
+public interface Dao {
 
-    T getItem(String jobName, Long jobId);
-
-    void deleteItem(Long id);
-
-    T saveOrUpdateItem(T t);
-
-    List<T> getAllItems();
-
-    List<String> getListOfJobs();
+    Build getBuild(String jobName, Long buildNumber);
 
     Job getJob(String jobName);
+
+    Build saveOrUpdateBuild(Build build);
+
+    Job saveOrUpdateJob(Job job);
+
+    List<Job> getAllJobs();
 }

@@ -3,83 +3,75 @@ package happy.rabbit.data;
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class HibernateDao implements Dao<Build> {
+@SuppressWarnings("unchecked")
+public class HibernateDao implements Dao {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    private Class thisClass = Build.class;
-    private String tableName = "build";
 
     public HibernateDao(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public Build getItem(String jobName, Long id) {
-        try {
-            return (Build) getCurrentSession().get(thisClass, id);
-        } catch (Exception e) {
-            throw new IllegalStateException("Can't find Build with id = " + id, e);
-        }
-    }
-
-    @Override
-    public void deleteItem(Long id) {
-        try {
-            if (checkIfIdExists(id)) {
-                Build member = (Build) getCurrentSession().get(thisClass, id);
-                getCurrentSession().delete(member);
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException("Can't delete Build with id=" + id, e);
-        }
-    }
-
-    @Override
-    public Build saveOrUpdateItem(Build jenkinsItem) {
-        try {
-            assert jenkinsItem.getNumber() != null;
-            Session session = getCurrentSession();
-            session.beginTransaction();
-            session.saveOrUpdate(jenkinsItem);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            throw new IllegalStateException("Can't update Build with number=" + jenkinsItem.getNumber(), e);
-        }
-        getCurrentSession().flush();
-        return jenkinsItem;
-    }
-
-    @Override
-    public List<Build> getAllItems() {
-        return getCurrentSession().createQuery("from " + tableName).list();
-    }
-
-    @Override
-    public List<String> getListOfJobs() {
-        return getCurrentSession().createQuery("from jobs").list();
+    public Build getBuild(String jobName, Long buildNumber) {
+        Query query= sessionFactory.getCurrentSession().
+                createQuery("from Build where number=:number and job_id=:job_id");
+        query.setParameter("number", buildNumber);
+        query.setParameter("job_id", jobName);
+        return (Build) query.uniqueResult();
     }
 
     @Override
     public Job getJob(String jobName) {
-        return null;
+        try {
+            return (Job) getCurrentSession().get(Job.class, jobName);
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't find Job with name = " + jobName, e);
+        }
     }
 
-    private boolean checkIfIdExists(long id) {
-        SQLQuery query = getCurrentSession()
-                .createSQLQuery("select count(*) as result from :table where id = :id");
-        query.setParameter("table", tableName).setParameter("id", id);
-        query.addScalar("result");
-        return !query.uniqueResult().toString().equals("0");
+    @Override
+    public Build saveOrUpdateBuild(Build build) {
+        try {
+            assert build.getNumber() != null;
+            assert build.getJob() != null;
 
+            Session session = getCurrentSession();
+            session.beginTransaction();
+            session.saveOrUpdate(build);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't update Build for job " + build.getJob()
+                    + " with number = " + build.getNumber(), e);
+        }
+        return build;
+    }
+
+    @Override
+    public Job saveOrUpdateJob(Job job) {
+        try {
+            Session session = getCurrentSession();
+            session.beginTransaction();
+            session.saveOrUpdate(job);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't update Job " + job.getDisplayName(), e);
+        }
+        return job;
+    }
+
+    @Override
+    public List<Job> getAllJobs() {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(Job.class).list();
     }
 
     private Session getCurrentSession() {

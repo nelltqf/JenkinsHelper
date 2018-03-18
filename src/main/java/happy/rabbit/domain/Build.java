@@ -30,7 +30,9 @@ public class Build {
     private Long duration;
 
     @ManyToMany
-    private List<Test> errors;
+    private List<Test> tests;
+    private String causeJobName;
+    private Long causeNumber;
 
     public Build() {
 
@@ -89,12 +91,12 @@ public class Build {
         this.duration = duration;
     }
 
-    public List<Test> getErrors() {
-        return errors;
+    public List<Test> getTests() {
+        return tests;
     }
 
-    public void setErrors(List<Test> errors) {
-        this.errors = errors;
+    public void setTests(List<Test> errors) {
+        this.tests = errors;
     }
 
     public Result getResult() {
@@ -118,5 +120,13 @@ public class Build {
 
     public boolean isBroken() {
         return result == Result.FAILURE;
+    }
+
+    public String getCauseJobName() {
+        return causeJobName;
+    }
+
+    public Long getCauseNumber() {
+        return causeNumber;
     }
 }

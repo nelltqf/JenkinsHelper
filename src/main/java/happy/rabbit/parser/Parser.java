@@ -1,10 +1,19 @@
 package happy.rabbit.parser;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import happy.rabbit.domain.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Parser {
 
@@ -27,5 +36,22 @@ public class Parser {
         mapper.findAndRegisterModules();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return mapper;
+    }
+
+    public static List<Test> parseTests(String json) {
+        List<Test> tests = new ArrayList<>();
+        try {
+            JsonNode jsonNode = CUSTOM_MAPPER.readTree(new BufferedReader(new StringReader(json)));
+            // TODO investigate how it works for multi-suites
+            // TODO refactor
+            jsonNode = jsonNode.get("childReports").findValue("suites");
+            for (JsonNode node: jsonNode) {
+                tests.addAll(CUSTOM_MAPPER.readValue(node.get("cases").toString(), new TypeReference<List<Test>>(){}));
+            }
+            return tests;
+        } catch (IOException e) {
+            LOGGER.error("Error while parsing: ", e);
+            throw new IllegalStateException(e);
+        }
     }
 }
