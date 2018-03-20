@@ -20,6 +20,11 @@
     <bean id="sessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+        <property name="packagesToScan">
+            <list>
+                <value>happy.rabbit.domain</value>
+            </list>
+        </property>
     </bean>
 
     <context:property-placeholder location="environment.properties" />

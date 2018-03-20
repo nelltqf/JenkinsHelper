@@ -22,8 +22,8 @@ public class HibernateDao implements Dao {
 
     @Override
     public Build getBuild(String jobName, Long buildNumber) {
-        Query query= sessionFactory.getCurrentSession().
-                createQuery("from Build where number=:number and job_id=:job_id");
+        Query query = getCurrentSession()
+                .createQuery("from Build where number=:number and job_id=:job_id");
         query.setParameter("number", buildNumber);
         query.setParameter("job_id", jobName);
         return (Build) query.uniqueResult();
@@ -60,8 +60,12 @@ public class HibernateDao implements Dao {
         try {
             Session session = getCurrentSession();
             session.beginTransaction();
+            job.getTestJobs().forEach(session::saveOrUpdate);
+            job.getBuilds().forEach(session::saveOrUpdate);
+            getCurrentSession().flush();
             session.saveOrUpdate(job);
             session.getTransaction().commit();
+            getCurrentSession().flush();
         } catch (Exception e) {
             throw new IllegalStateException("Can't update Job " + job.getDisplayName(), e);
         }
@@ -70,8 +74,7 @@ public class HibernateDao implements Dao {
 
     @Override
     public List<Job> getAllJobs() {
-        return sessionFactory.getCurrentSession()
-                .createCriteria(Job.class).list();
+        return getCurrentSession().createCriteria(Job.class).list();
     }
 
     private Session getCurrentSession() {

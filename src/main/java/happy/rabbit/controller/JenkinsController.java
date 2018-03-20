@@ -37,6 +37,14 @@ public class JenkinsController {
         return jenkinsService.getBuild(jobName, jobId);
     }
 
+    @RequestMapping(value = "/addJob",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Job saveJob(@RequestBody Job job) {
+        return jenkinsService.saveNewJob(job);
+    }
+
     @RequestMapping(value = "/{jobName}/all",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)

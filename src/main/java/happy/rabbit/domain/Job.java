@@ -1,6 +1,7 @@
 package happy.rabbit.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,8 +19,8 @@ public class Job {
     @OneToMany
     private List<Build> builds;
 
-    @ManyToMany
-    private List<Job> testJobs;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {javax.persistence.CascadeType.PERSIST})
+    private List<Job> testJobs = new ArrayList<>();
 
     public Job() {
 
@@ -41,7 +42,7 @@ public class Job {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public void setIsActive(boolean active) {
         isActive = active;
     }
 
@@ -49,7 +50,7 @@ public class Job {
         return isPipeline;
     }
 
-    public void setPipeline(boolean pipeline) {
+    public void setIsPipeline(boolean pipeline) {
         isPipeline = pipeline;
     }
 

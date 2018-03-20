@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,23 +68,29 @@ public class JenkinsService {
                 .collect(Collectors.toList());
         jobs.forEach(job -> {
                     Job jobFromJenkins = Parser.parseJson(jenkinsApi.getJobJson(job.getDisplayName()), Job.class);
-                    // TODO investigate if update is happening automatically
+                    // TODO investigate if update is happening automatically here
                     dao.saveOrUpdateJob(jobFromJenkins);
                 });
+        Map<Job, List<Build>> failedBuilds = collectFailedBuilds(jobs);
+
+        failedBuilds.forEach((job, builds) -> builds.forEach(build -> {
+            List<Build> testBuilds = findTestBuildsForPipelineRun(build, job.getTestJobs());
+            testBuilds.forEach(testBuild -> build.setTests(getErrorsFromBuild(testBuild)));
+        }));
+    }
+
+    private Map<Job, List<Build>> collectFailedBuilds(List<Job> jobs) {
+        Map<Job, List<Build>> map = new HashMap<>();
         jobs.stream()
                 .filter(Job::isPipeline)
                 .forEach(job -> {
                     List<Build> failedBuilds = job.getBuilds().stream()
                             .filter(Build::isBroken)
-                            .filter(build -> build.getFailureReason().isEmpty())
+                            .filter(build -> build.getFailureReason() == null || build.getFailureReason().isEmpty())
                             .collect(Collectors.toList());
-                    failedBuilds.forEach(build -> {
-                        List<Build> testBuilds = findTestBuildsForPipelineRun(build, job.getTestJobs());
-                        testBuilds.forEach(testBuild -> {
-                            build.setTests(getErrorsFromBuild(testBuild));
-                        });
-                    });
+                    map.put(job, failedBuilds);
                 });
+        return map;
     }
 
     public List<Build> findTestBuildsForPipelineRun(Build pipelineBuild, List<Job> testJobs) {
@@ -110,5 +118,10 @@ public class JenkinsService {
 //        items.forEach(this::collectErrors);
 //        Analyzer.assignTitleAndDescription(items);
 //        updateDescription(jobName, items);
+    }
+
+    public Job saveNewJob(Job job) {
+        dao.saveOrUpdateJob(job);
+        return job;
     }
 }
