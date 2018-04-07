@@ -1,32 +1,27 @@
 package happy.rabbit.controller;
 
-import happy.rabbit.data.Dao;
-import happy.rabbit.http.JenkinsApi;
-import org.junit.Before;
+import happy.rabbit.domain.Job;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static happy.rabbit.TestUtils.JOB_JSON;
-import static happy.rabbit.TestUtils.PIPELINE_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:spring-context.xml")
 public class JenkinsServiceTest {
 
-    @Mock
-    private Dao dao;
-
-    @Mock
-    private JenkinsApi jenkinsApi;
-
-    @InjectMocks
+    @Autowired
     private JenkinsService jenkinsService;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        Mockito.when(jenkinsApi.getJobJson(PIPELINE_NAME)).thenReturn(JOB_JSON);
+    @Test
+    public void saveJob() {
+        Job job = new Job();
+        job.setDisplayName("TestName");
+        jenkinsService.saveNewJob(job);
+        assertThat(jenkinsService.getJobFromDB("Test")).isNotNull();
     }
 
     @Test

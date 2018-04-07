@@ -17,7 +17,7 @@ public class Job {
     private boolean isActive = true;
 
     @OneToMany
-    private List<Build> builds;
+    private List<Build> builds = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {javax.persistence.CascadeType.PERSIST})
     private List<Job> testJobs = new ArrayList<>();
@@ -72,5 +72,12 @@ public class Job {
 
     public void set_class(String _class) {
         isPipeline = _class.endsWith(PIPELINE);
+    }
+
+    @Override
+    public String toString() {
+        return "Job{" +
+                "displayName='" + displayName + '\'' +
+                '}';
     }
 }

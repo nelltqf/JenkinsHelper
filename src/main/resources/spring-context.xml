@@ -22,7 +22,7 @@
         <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
         <property name="packagesToScan">
             <list>
-                <value>happy.rabbit.domain</value>
+                <value>happy.rabbit</value>
             </list>
         </property>
     </bean>

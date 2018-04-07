@@ -33,7 +33,7 @@
 
     <properties>
         <apache.http.version>4.3.6</apache.http.version>
-        <hibernateCoreVersion>4.3.0.Final</hibernateCoreVersion>
+        <hibernateCoreVersion>5.2.9.Final</hibernateCoreVersion>
         <hsqldbVersion>2.2.9</hsqldbVersion>
         <springContextVersion>4.0.5.RELEASE</springContextVersion>
         <springORMVersion>4.0.6.RELEASE</springORMVersion>
@@ -120,9 +120,15 @@
         </dependency>
         <!--Testing-->
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <version>1.5.3.RELEASE</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>

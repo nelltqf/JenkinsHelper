@@ -8,7 +8,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class HibernateDao implements Dao {
@@ -45,9 +48,7 @@ public class HibernateDao implements Dao {
             assert build.getJob() != null;
 
             Session session = getCurrentSession();
-            session.beginTransaction();
             session.saveOrUpdate(build);
-            session.getTransaction().commit();
         } catch (Exception e) {
             throw new IllegalStateException("Can't update Build for job " + build.getJob()
                     + " with number = " + build.getNumber(), e);
@@ -59,13 +60,17 @@ public class HibernateDao implements Dao {
     public Job saveOrUpdateJob(Job job) {
         try {
             Session session = getCurrentSession();
-            session.beginTransaction();
-            job.getTestJobs().forEach(session::saveOrUpdate);
-            job.getBuilds().forEach(session::saveOrUpdate);
-            getCurrentSession().flush();
+            if (job.isPipeline()) {
+                List<Build> allBuilds = new ArrayList<>(job.getBuilds());
+                allBuilds.addAll(job.getTestJobs()
+                        .stream()
+                        .map(Job::getBuilds)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList()));
+                allBuilds.forEach(this::saveOrUpdateBuild);
+                job.getTestJobs().forEach(session::saveOrUpdate);
+            }
             session.saveOrUpdate(job);
-            session.getTransaction().commit();
-            getCurrentSession().flush();
         } catch (Exception e) {
             throw new IllegalStateException("Can't update Job " + job.getDisplayName(), e);
         }

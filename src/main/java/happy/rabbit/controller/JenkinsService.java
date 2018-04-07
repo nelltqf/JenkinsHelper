@@ -10,21 +10,22 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class JenkinsService {
 
-    @Autowired
     private Dao dao;
 
-    @Autowired
     private JenkinsApi jenkinsApi;
 
+    @Autowired
+    public JenkinsService(@NotNull Dao dao, @NotNull JenkinsApi jenkinsApi) {
+        this.dao = dao;
+        this.jenkinsApi = jenkinsApi;
+    }
 
     public void saveBuilds(List<Build> builds) {
         builds.forEach(dao::saveOrUpdateBuild);
@@ -40,7 +41,7 @@ public class JenkinsService {
 
     public Job loadJob(String jobName) {
         String json = jenkinsApi.getJobJson(jobName);
-        return Parser.parseJson(json, Job.class);
+        return Parser.parseJob(json);
     }
 
     public void updateJenkins(List<Build> jenkinsItems, String jobName) {
@@ -63,39 +64,27 @@ public class JenkinsService {
     }
 
     public void analyzeAndUpdateAllActivePipelines() {
-        List<Job> jobs = dao.getAllJobs().stream()
+        List<Job> jobs = dao.getAllJobs()
+                .stream()
                 .filter(Job::isActive)
                 .collect(Collectors.toList());
         jobs.forEach(job -> {
-                    Job jobFromJenkins = Parser.parseJson(jenkinsApi.getJobJson(job.getDisplayName()), Job.class);
-                    // TODO investigate if update is happening automatically here
+                    Job jobFromJenkins = Parser.parseJob(jenkinsApi.getJobJson(job.getDisplayName()));
                     dao.saveOrUpdateJob(jobFromJenkins);
                 });
-        Map<Job, List<Build>> failedBuilds = collectFailedBuilds(jobs);
-
-        failedBuilds.forEach((job, builds) -> builds.forEach(build -> {
-            List<Build> testBuilds = findTestBuildsForPipelineRun(build, job.getTestJobs());
-            testBuilds.forEach(testBuild -> build.setTests(getErrorsFromBuild(testBuild)));
-        }));
-    }
-
-    private Map<Job, List<Build>> collectFailedBuilds(List<Job> jobs) {
-        Map<Job, List<Build>> map = new HashMap<>();
-        jobs.stream()
+        List<Build> failedBuilds = jobs.stream()
                 .filter(Job::isPipeline)
-                .forEach(job -> {
-                    List<Build> failedBuilds = job.getBuilds().stream()
-                            .filter(Build::isBroken)
-                            .filter(build -> build.getFailureReason() == null || build.getFailureReason().isEmpty())
-                            .collect(Collectors.toList());
-                    map.put(job, failedBuilds);
-                });
-        return map;
+                .map(Job::getBuilds)
+                .flatMap(Collection::stream)
+                .filter(Build::isBroken)
+                .filter(build -> build.getFailureReason() == null || build.getFailureReason().isEmpty())
+                .collect(Collectors.toList());
+
     }
 
-    public List<Build> findTestBuildsForPipelineRun(Build pipelineBuild, List<Job> testJobs) {
+    public List<Build> findTestBuildsForPipelineRun(Build pipelineBuild) {
         List<Build> testBuilds = new ArrayList<>();
-        testJobs.forEach(testJob -> {
+        pipelineBuild.getJob().getTestJobs().forEach(testJob -> {
             Build testResultsBuild = testJob.getBuilds().stream()
                     .filter(testBuild -> pipelineBuild.getJob().getDisplayName().equals(testBuild.getCauseJobName()))
                     .filter(testBuild -> pipelineBuild.getNumber().equals(testBuild.getCauseNumber()))

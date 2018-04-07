@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import happy.rabbit.domain.Job;
 import happy.rabbit.domain.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +31,10 @@ public class Parser {
         }
     }
 
-    private static ObjectMapper customMapper() {
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule());
-        mapper.findAndRegisterModules();
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        return mapper;
+    public static Job parseJob(String json) {
+        Job job = parseJson(json, Job.class);
+        job.getBuilds().forEach(build -> build.setJob(job.getDisplayName()));
+        return job;
     }
 
     public static List<Test> parseTests(String json) {
@@ -53,5 +52,13 @@ public class Parser {
             LOGGER.error("Error while parsing: ", e);
             throw new IllegalStateException(e);
         }
+    }
+
+    private static ObjectMapper customMapper() {
+        ObjectMapper mapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule());
+        mapper.findAndRegisterModules();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return mapper;
     }
 }
