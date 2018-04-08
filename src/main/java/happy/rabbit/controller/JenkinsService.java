@@ -41,7 +41,9 @@ public class JenkinsService {
 
     public Job loadJob(String jobName) {
         String json = jenkinsApi.getJobJson(jobName);
-        return Parser.parseJob(json);
+        Job job = Parser.parseJob(json);
+        dao.saveOrUpdateJob(job);
+        return job;
     }
 
     public void updateJenkins(List<Build> jenkinsItems, String jobName) {
@@ -53,7 +55,7 @@ public class JenkinsService {
 
     public List<Test> getErrorsForPipelineRun(String jobName, Long id) {
         Job job = getJobFromDB(jobName);
-        Build build = job.getBuilds().stream().filter(jobBuild -> jobBuild.getNumber().equals(id))
+        Build build = job.getBuilds().stream().filter(jobBuild -> jobBuild.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Can't find any build with number " + id
                         + " for pipeline " + jobName));
@@ -87,7 +89,7 @@ public class JenkinsService {
         pipelineBuild.getJob().getTestJobs().forEach(testJob -> {
             Build testResultsBuild = testJob.getBuilds().stream()
                     .filter(testBuild -> pipelineBuild.getJob().getDisplayName().equals(testBuild.getCauseJobName()))
-                    .filter(testBuild -> pipelineBuild.getNumber().equals(testBuild.getCauseNumber()))
+                    .filter(testBuild -> pipelineBuild.getId().equals(testBuild.getCauseNumber()))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Can't find any build in "
                             + testJob.getDisplayName()

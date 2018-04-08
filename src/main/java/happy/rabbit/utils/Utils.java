@@ -27,7 +27,7 @@ public class Utils {
 
     public static JSONObject getJsonObjectFromJenkinsItem(Build item) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("displayName", "#" + item.getNumber() + " [" + item.getFailureReason() + "]");
+        jsonObject.put("displayName", "#" + item.getId() + " [" + item.getFailureReason() + "]");
         jsonObject.put("description", item.getDescription());
         jsonObject.put("core:apply", "");
         return jsonObject;

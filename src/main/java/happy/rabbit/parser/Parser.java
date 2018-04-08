@@ -33,7 +33,7 @@ public class Parser {
 
     public static Job parseJob(String json) {
         Job job = parseJson(json, Job.class);
-        job.getBuilds().forEach(build -> build.setJob(job.getDisplayName()));
+        job.getBuilds().forEach(build -> build.setJob(job));
         return job;
     }
 

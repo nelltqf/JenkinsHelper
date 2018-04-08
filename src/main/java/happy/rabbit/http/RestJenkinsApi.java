@@ -55,7 +55,7 @@ public class RestJenkinsApi implements JenkinsApi {
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
             Request.post(baseUrl + JOB + build.getJob().getDisplayName()
-                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(build.getNumber())))
+                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(build.getId())))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
                     .withFormField("json", jsonObject.toString())
@@ -69,7 +69,7 @@ public class RestJenkinsApi implements JenkinsApi {
     @Override
     public String getErrors(Build build) {
         try {
-            return Request.get(baseUrl + JOB + build.getJob() + "/" + build.getNumber() + GET_ERRORS)
+            return Request.get(baseUrl + JOB + build.getJob() + "/" + build.getId() + GET_ERRORS)
                     .withBasicAuth(username, password)
                     .asString();
         } catch (Exception e) {

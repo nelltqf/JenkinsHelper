@@ -1,11 +1,14 @@
 package happy.rabbit.controller;
 
+import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,8 +28,32 @@ public class JenkinsServiceTest {
     }
 
     @Test
+    public void saveBuild() {
+        Job job = getJob();
+        jenkinsService.saveNewJob(job);
+        Build build = new Build(job, 100L);
+        jenkinsService.saveBuilds(Collections.singletonList(build));
+        assertThat(jenkinsService.getBuild(build.getJob().getDisplayName(), build.getId())).isNotNull();
+    }
+
+    @Test
     public void testGettingJobs() {
+        Job testJob = new Job();
+        testJob.setDisplayName("Test");
+        Job pipeline = new Job();
+        pipeline.setDisplayName("TestPipeline");
+        pipeline.setIsPipeline(true);
+        pipeline.setTestJobs(Collections.singletonList(testJob));
+        jenkinsService.saveNewJob(testJob);
+        jenkinsService.saveNewJob(pipeline);
+        assertThat(jenkinsService.getJobFromDB(pipeline.getDisplayName())).isNotNull();
         jenkinsService.analyzeAndUpdateAllActivePipelines();
+    }
+
+    private Job getJob() {
+        Job job = new Job();
+        job.setDisplayName("TestName");
+        return job;
     }
 
 }

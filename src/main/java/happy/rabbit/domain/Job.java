@@ -4,19 +4,23 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Table(name = "JOB")
 @Entity
 public class Job {
 
     private static final String PIPELINE = "WorkflowJob";
 
     @Id
+    @Column(name = "ID")
     private String displayName;
 
+    @Column(name = "IS_PIPELINE")
     private boolean isPipeline;
 
+    @Column(name = "IS_ACTIVE")
     private boolean isActive = true;
 
-    @OneToMany
+    @OneToMany(mappedBy = "id.job", cascade = CascadeType.ALL)
     private List<Build> builds = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {javax.persistence.CascadeType.PERSIST})

@@ -44,14 +44,15 @@ public class HibernateDao implements Dao {
     @Override
     public Build saveOrUpdateBuild(Build build) {
         try {
-            assert build.getNumber() != null;
+            assert build.getId() != null;
             assert build.getJob() != null;
 
             Session session = getCurrentSession();
             session.saveOrUpdate(build);
+            session.flush();
         } catch (Exception e) {
             throw new IllegalStateException("Can't update Build for job " + build.getJob()
-                    + " with number = " + build.getNumber(), e);
+                    + " with number = " + build.getId(), e);
         }
         return build;
     }
@@ -68,9 +69,8 @@ public class HibernateDao implements Dao {
                         .flatMap(Collection::stream)
                         .collect(Collectors.toList()));
                 allBuilds.forEach(this::saveOrUpdateBuild);
-                job.getTestJobs().forEach(session::saveOrUpdate);
             }
-            session.saveOrUpdate(job);
+            session.flush();
         } catch (Exception e) {
             throw new IllegalStateException("Can't update Job " + job.getDisplayName(), e);
         }

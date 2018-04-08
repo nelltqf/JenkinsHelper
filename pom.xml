@@ -33,7 +33,7 @@
 
     <properties>
         <apache.http.version>4.3.6</apache.http.version>
-        <hibernateCoreVersion>5.2.9.Final</hibernateCoreVersion>
+        <hibernateCoreVersion>4.3.0.Final</hibernateCoreVersion>
         <hsqldbVersion>2.2.9</hsqldbVersion>
         <springContextVersion>4.0.5.RELEASE</springContextVersion>
         <springORMVersion>4.0.6.RELEASE</springORMVersion>

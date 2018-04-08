@@ -1,20 +1,15 @@
 package happy.rabbit.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
+@Table(name = "BUILD")
 @Entity
 public class Build {
 
-    // TODO consider using embeddedId
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    private Long number;
-
-    @ManyToOne
-    private Job job;
+    @EmbeddedId
+    private BuildId id = new BuildId();
 
     private String description;
 
@@ -38,17 +33,17 @@ public class Build {
 
     }
 
-    public Build(String jobName, Long id) {
-        this.job = new Job(jobName);
-        this.number = id;
+    public Build(Job job, Long id) {
+        this.id.setId(id);
+        this.id.setJob(job);
     }
 
-    public Long getNumber() {
-        return number;
+    public Long getId() {
+        return id.getId();
     }
 
-    public void setNumber(Long number) {
-        this.number = number;
+    public void setId(Long id) {
+        this.id.setId(id);
     }
 
     public Long getTimestamp() {
@@ -76,11 +71,11 @@ public class Build {
     }
 
     public Job getJob() {
-        return job;
+        return id.getJob();
     }
 
-    public void setJob(String jobName) {
-        this.job = new Job(jobName);
+    public void setJob(Job job) {
+        this.id.setJob(job);
     }
 
     public Long getDuration() {
@@ -115,7 +110,7 @@ public class Build {
 
     @Override
     public String toString() {
-        return job.getDisplayName() + " #" + number;
+        return id.toString();
     }
 
     public boolean isBroken() {
@@ -128,5 +123,43 @@ public class Build {
 
     public Long getCauseNumber() {
         return causeNumber;
+    }
+
+    @Embeddable
+    private class BuildId implements Serializable {
+
+        @ManyToOne
+        private Job job;
+
+        private Long id;
+
+        public BuildId() {
+        }
+
+        public BuildId(Job job, Long id) {
+            this.job = job;
+            this.id = id;
+        }
+
+        public Job getJob() {
+            return job;
+        }
+
+        public void setJob(Job job) {
+            this.job = job;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return job + " #" + id;
+        }
     }
 }
