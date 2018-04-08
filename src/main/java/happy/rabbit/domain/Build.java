@@ -38,6 +38,10 @@ public class Build {
         this.id.setJob(job);
     }
 
+    public BuildId getBuildId() {
+        return id;
+    }
+
     public Long getId() {
         return id.getId();
     }
@@ -126,7 +130,7 @@ public class Build {
     }
 
     @Embeddable
-    private class BuildId implements Serializable {
+    public class BuildId implements Serializable {
 
         @ManyToOne
         private Job job;

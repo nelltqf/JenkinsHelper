@@ -32,7 +32,8 @@ public class JenkinsService {
     }
 
     public Build getBuild(String jobName, Long jobId) {
-        return dao.getBuild(jobName, jobId);
+        Job buildJob = dao.getJob(jobName);
+        return dao.getBuild(new Build().new BuildId(buildJob, jobId));
     }
 
     public Job getJobFromDB(String jobName) {

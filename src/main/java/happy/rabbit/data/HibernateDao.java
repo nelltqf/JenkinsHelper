@@ -2,10 +2,8 @@ package happy.rabbit.data;
 
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.apache.log4j.Logger;
+import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -16,20 +14,22 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class HibernateDao implements Dao {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    private static final Logger LOGGER = Logger.getLogger(HibernateDao.class);
 
-    public HibernateDao(SessionFactory sessionFactory) {
+    @Autowired
+    private org.hibernate.SessionFactory sessionFactory;
+
+    public HibernateDao(org.hibernate.SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public Build getBuild(String jobName, Long buildNumber) {
-        Query query = getCurrentSession()
-                .createQuery("from Build where number=:number and job_id=:job_id");
-        query.setParameter("number", buildNumber);
-        query.setParameter("job_id", jobName);
-        return (Build) query.uniqueResult();
+    public Build getBuild(Build.BuildId buildId) {
+        try {
+            return (Build) getCurrentSession().get(Build.class, buildId);
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't find build  " + buildId);
+        }
     }
 
     @Override
@@ -48,8 +48,9 @@ public class HibernateDao implements Dao {
             assert build.getJob() != null;
 
             Session session = getCurrentSession();
+            Transaction transaction = session.beginTransaction();
             session.saveOrUpdate(build);
-            session.flush();
+            transaction.commit();
         } catch (Exception e) {
             throw new IllegalStateException("Can't update Build for job " + build.getJob()
                     + " with number = " + build.getId(), e);
@@ -70,7 +71,9 @@ public class HibernateDao implements Dao {
                         .collect(Collectors.toList()));
                 allBuilds.forEach(this::saveOrUpdateBuild);
             }
-            session.flush();
+            Transaction transaction = session.beginTransaction();
+            session.saveOrUpdate(job);
+            transaction.commit();
         } catch (Exception e) {
             throw new IllegalStateException("Can't update Job " + job.getDisplayName(), e);
         }
@@ -86,6 +89,7 @@ public class HibernateDao implements Dao {
         try {
             return this.sessionFactory.getCurrentSession();
         } catch (HibernateException e) {
+            LOGGER.warn("Reopening session", e);
             return this.sessionFactory.openSession();
         }
     }

@@ -21,17 +21,18 @@ public class JenkinsServiceTest {
 
     @Test
     public void saveJob() {
+        String jobName = "TestName";
         Job job = new Job();
-        job.setDisplayName("TestName");
+        job.setDisplayName(jobName);
         jenkinsService.saveNewJob(job);
-        assertThat(jenkinsService.getJobFromDB("Test")).isNotNull();
+        assertThat(jenkinsService.getJobFromDB(jobName)).isNotNull();
     }
 
     @Test
     public void saveBuild() {
         Job job = getJob();
         jenkinsService.saveNewJob(job);
-        Build build = new Build(job, 100L);
+        Build build = new Build(job, 101L);
         jenkinsService.saveBuilds(Collections.singletonList(build));
         assertThat(jenkinsService.getBuild(build.getJob().getDisplayName(), build.getId())).isNotNull();
     }

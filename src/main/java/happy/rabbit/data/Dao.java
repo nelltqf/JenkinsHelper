@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface Dao {
 
-    Build getBuild(String jobName, Long buildNumber);
+    Build getBuild(Build.BuildId buildId);
 
     Job getJob(String jobName);
 

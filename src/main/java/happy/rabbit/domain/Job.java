@@ -20,10 +20,10 @@ public class Job {
     @Column(name = "IS_ACTIVE")
     private boolean isActive = true;
 
-    @OneToMany(mappedBy = "id.job", cascade = CascadeType.ALL)
+    @OneToMany
     private List<Build> builds = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {javax.persistence.CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Job> testJobs = new ArrayList<>();
 
     public Job() {
