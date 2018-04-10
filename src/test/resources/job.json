@@ -1,0 +1,697 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+  "actions": [
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "_class": "com.cloudbees.plugins.credentials.ViewCredentialsAction",
+      "stores": {}
+    }
+  ],
+  "description": "",
+  "displayName": "TestPipeline",
+  "displayNameOrNull": null,
+  "fullDisplayName": "TestPipeline",
+  "fullName": "TestPipeline",
+  "name": "TestPipeline",
+  "url": "http://localhost:8080/job/TestPipeline/",
+  "buildable": true,
+  "builds": [
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "actions": [
+        {
+          "_class": "hudson.model.CauseAction",
+          "causes": [
+            {
+              "_class": "hudson.model.Cause$UserIdCause",
+              "shortDescription": "Started by user Admin",
+              "userId": "admin",
+              "userName": "Admin"
+            }
+          ]
+        },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+        },
+        {},
+        {}
+      ],
+      "artifacts": [],
+      "building": false,
+      "description": "Some desc",
+      "displayName": "#6 [REG]",
+      "duration": 17443,
+      "estimatedDuration": 15752,
+      "executor": null,
+      "fullDisplayName": "TestPipeline #6 [REG]",
+      "id": "6",
+      "keepLog": false,
+      "number": 6,
+      "queueId": 23,
+      "result": "FAILURE",
+      "timestamp": 1520236517513,
+      "url": "http://localhost:8080/job/TestPipeline/6/",
+      "changeSets": [],
+      "culprits": [],
+      "nextBuild": null,
+      "previousBuild": {
+        "number": 5,
+        "url": "http://localhost:8080/job/TestPipeline/5/"
+      }
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "actions": [
+        {
+          "_class": "hudson.model.CauseAction",
+          "causes": [
+            {
+              "_class": "hudson.model.Cause$UserIdCause",
+              "shortDescription": "Started by user Admin",
+              "userId": "admin",
+              "userName": "Admin"
+            }
+          ]
+        },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+        },
+        {},
+        {}
+      ],
+      "artifacts": [],
+      "building": false,
+      "description": null,
+      "displayName": "#5",
+      "duration": 13099,
+      "estimatedDuration": 15752,
+      "executor": null,
+      "fullDisplayName": "TestPipeline #5",
+      "id": "5",
+      "keepLog": false,
+      "number": 5,
+      "queueId": 20,
+      "result": "FAILURE",
+      "timestamp": 1520236506398,
+      "url": "http://localhost:8080/job/TestPipeline/5/",
+      "changeSets": [],
+      "culprits": [],
+      "nextBuild": {
+        "number": 6,
+        "url": "http://localhost:8080/job/TestPipeline/6/"
+      },
+      "previousBuild": {
+        "number": 4,
+        "url": "http://localhost:8080/job/TestPipeline/4/"
+      }
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "actions": [
+        {
+          "_class": "hudson.model.CauseAction",
+          "causes": [
+            {
+              "_class": "hudson.model.Cause$UserIdCause",
+              "shortDescription": "Started by user Admin",
+              "userId": "admin",
+              "userName": "Admin"
+            }
+          ]
+        },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+        },
+        {},
+        {}
+      ],
+      "artifacts": [],
+      "building": false,
+      "description": null,
+      "displayName": "#4",
+      "duration": 16713,
+      "estimatedDuration": 15752,
+      "executor": null,
+      "fullDisplayName": "TestPipeline #4",
+      "id": "4",
+      "keepLog": false,
+      "number": 4,
+      "queueId": 17,
+      "result": "SUCCESS",
+      "timestamp": 1520236432564,
+      "url": "http://localhost:8080/job/TestPipeline/4/",
+      "changeSets": [],
+      "culprits": [],
+      "nextBuild": {
+        "number": 5,
+        "url": "http://localhost:8080/job/TestPipeline/5/"
+      },
+      "previousBuild": {
+        "number": 3,
+        "url": "http://localhost:8080/job/TestPipeline/3/"
+      }
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "actions": [
+        {
+          "_class": "hudson.model.CauseAction",
+          "causes": [
+            {
+              "_class": "hudson.model.Cause$UserIdCause",
+              "shortDescription": "Started by user Admin",
+              "userId": "admin",
+              "userName": "Admin"
+            }
+          ]
+        },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+        },
+        {},
+        {}
+      ],
+      "artifacts": [],
+      "building": false,
+      "description": null,
+      "displayName": "#3",
+      "duration": 17675,
+      "estimatedDuration": 15752,
+      "executor": null,
+      "fullDisplayName": "TestPipeline #3",
+      "id": "3",
+      "keepLog": false,
+      "number": 3,
+      "queueId": 14,
+      "result": "FAILURE",
+      "timestamp": 1520236371008,
+      "url": "http://localhost:8080/job/TestPipeline/3/",
+      "changeSets": [],
+      "culprits": [],
+      "nextBuild": {
+        "number": 4,
+        "url": "http://localhost:8080/job/TestPipeline/4/"
+      },
+      "previousBuild": {
+        "number": 2,
+        "url": "http://localhost:8080/job/TestPipeline/2/"
+      }
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "actions": [
+        {
+          "_class": "hudson.model.CauseAction",
+          "causes": [
+            {
+              "_class": "hudson.model.Cause$UserIdCause",
+              "shortDescription": "Started by user Admin",
+              "userId": "admin",
+              "userName": "Admin"
+            }
+          ]
+        },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+        },
+        {},
+        {}
+      ],
+      "artifacts": [],
+      "building": false,
+      "description": null,
+      "displayName": "#2",
+      "duration": 18057,
+      "estimatedDuration": 15752,
+      "executor": null,
+      "fullDisplayName": "TestPipeline #2",
+      "id": "2",
+      "keepLog": false,
+      "number": 2,
+      "queueId": 11,
+      "result": "FAILURE",
+      "timestamp": 1520236351142,
+      "url": "http://localhost:8080/job/TestPipeline/2/",
+      "changeSets": [],
+      "culprits": [],
+      "nextBuild": {
+        "number": 3,
+        "url": "http://localhost:8080/job/TestPipeline/3/"
+      },
+      "previousBuild": {
+        "number": 1,
+        "url": "http://localhost:8080/job/TestPipeline/1/"
+      }
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "actions": [
+        {
+          "_class": "hudson.model.CauseAction",
+          "causes": [
+            {
+              "_class": "hudson.model.Cause$UserIdCause",
+              "shortDescription": "Started by user Admin",
+              "userId": "admin",
+              "userName": "Admin"
+            }
+          ]
+        },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+        },
+        {},
+        {}
+      ],
+      "artifacts": [],
+      "building": false,
+      "description": null,
+      "displayName": "#1",
+      "duration": 17909,
+      "estimatedDuration": 15752,
+      "executor": null,
+      "fullDisplayName": "TestPipeline #1",
+      "id": "1",
+      "keepLog": false,
+      "number": 1,
+      "queueId": 8,
+      "result": "FAILURE",
+      "timestamp": 1520236330685,
+      "url": "http://localhost:8080/job/TestPipeline/1/",
+      "changeSets": [],
+      "culprits": [],
+      "nextBuild": {
+        "number": 2,
+        "url": "http://localhost:8080/job/TestPipeline/2/"
+      },
+      "previousBuild": null
+    }
+  ],
+  "color": "red",
+  "firstBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "actions": [
+      {
+        "_class": "hudson.model.CauseAction",
+        "causes": [
+          {
+            "_class": "hudson.model.Cause$UserIdCause",
+            "shortDescription": "Started by user Admin",
+            "userId": "admin",
+            "userName": "Admin"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+      },
+      {},
+      {}
+    ],
+    "artifacts": [],
+    "building": false,
+    "description": null,
+    "displayName": "#1",
+    "duration": 17909,
+    "estimatedDuration": 15752,
+    "executor": null,
+    "fullDisplayName": "TestPipeline #1",
+    "id": "1",
+    "keepLog": false,
+    "number": 1,
+    "queueId": 8,
+    "result": "FAILURE",
+    "timestamp": 1520236330685,
+    "url": "http://localhost:8080/job/TestPipeline/1/",
+    "changeSets": [],
+    "culprits": [],
+    "nextBuild": {
+      "number": 2,
+      "url": "http://localhost:8080/job/TestPipeline/2/"
+    },
+    "previousBuild": null
+  },
+  "healthReport": [
+    {
+      "description": "Build stability: 4 out of the last 5 builds failed.",
+      "iconClassName": "icon-health-00to19",
+      "iconUrl": "health-00to19.png",
+      "score": 20
+    }
+  ],
+  "inQueue": false,
+  "keepDependencies": false,
+  "lastBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "actions": [
+      {
+        "_class": "hudson.model.CauseAction",
+        "causes": [
+          {
+            "_class": "hudson.model.Cause$UserIdCause",
+            "shortDescription": "Started by user Admin",
+            "userId": "admin",
+            "userName": "Admin"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+      },
+      {},
+      {}
+    ],
+    "artifacts": [],
+    "building": false,
+    "description": "Some desc",
+    "displayName": "#6 [REG]",
+    "duration": 17443,
+    "estimatedDuration": 15752,
+    "executor": null,
+    "fullDisplayName": "TestPipeline #6 [REG]",
+    "id": "6",
+    "keepLog": false,
+    "number": 6,
+    "queueId": 23,
+    "result": "FAILURE",
+    "timestamp": 1520236517513,
+    "url": "http://localhost:8080/job/TestPipeline/6/",
+    "changeSets": [],
+    "culprits": [],
+    "nextBuild": null,
+    "previousBuild": {
+      "number": 5,
+      "url": "http://localhost:8080/job/TestPipeline/5/"
+    }
+  },
+  "lastCompletedBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "actions": [
+      {
+        "_class": "hudson.model.CauseAction",
+        "causes": [
+          {
+            "_class": "hudson.model.Cause$UserIdCause",
+            "shortDescription": "Started by user Admin",
+            "userId": "admin",
+            "userName": "Admin"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+      },
+      {},
+      {}
+    ],
+    "artifacts": [],
+    "building": false,
+    "description": "Some desc",
+    "displayName": "#6 [REG]",
+    "duration": 17443,
+    "estimatedDuration": 15752,
+    "executor": null,
+    "fullDisplayName": "TestPipeline #6 [REG]",
+    "id": "6",
+    "keepLog": false,
+    "number": 6,
+    "queueId": 23,
+    "result": "FAILURE",
+    "timestamp": 1520236517513,
+    "url": "http://localhost:8080/job/TestPipeline/6/",
+    "changeSets": [],
+    "culprits": [],
+    "nextBuild": null,
+    "previousBuild": {
+      "number": 5,
+      "url": "http://localhost:8080/job/TestPipeline/5/"
+    }
+  },
+  "lastFailedBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "actions": [
+      {
+        "_class": "hudson.model.CauseAction",
+        "causes": [
+          {
+            "_class": "hudson.model.Cause$UserIdCause",
+            "shortDescription": "Started by user Admin",
+            "userId": "admin",
+            "userName": "Admin"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+      },
+      {},
+      {}
+    ],
+    "artifacts": [],
+    "building": false,
+    "description": "Some desc",
+    "displayName": "#6 [REG]",
+    "duration": 17443,
+    "estimatedDuration": 15752,
+    "executor": null,
+    "fullDisplayName": "TestPipeline #6 [REG]",
+    "id": "6",
+    "keepLog": false,
+    "number": 6,
+    "queueId": 23,
+    "result": "FAILURE",
+    "timestamp": 1520236517513,
+    "url": "http://localhost:8080/job/TestPipeline/6/",
+    "changeSets": [],
+    "culprits": [],
+    "nextBuild": null,
+    "previousBuild": {
+      "number": 5,
+      "url": "http://localhost:8080/job/TestPipeline/5/"
+    }
+  },
+  "lastStableBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "actions": [
+      {
+        "_class": "hudson.model.CauseAction",
+        "causes": [
+          {
+            "_class": "hudson.model.Cause$UserIdCause",
+            "shortDescription": "Started by user Admin",
+            "userId": "admin",
+            "userName": "Admin"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+      },
+      {},
+      {}
+    ],
+    "artifacts": [],
+    "building": false,
+    "description": null,
+    "displayName": "#4",
+    "duration": 16713,
+    "estimatedDuration": 15752,
+    "executor": null,
+    "fullDisplayName": "TestPipeline #4",
+    "id": "4",
+    "keepLog": false,
+    "number": 4,
+    "queueId": 17,
+    "result": "SUCCESS",
+    "timestamp": 1520236432564,
+    "url": "http://localhost:8080/job/TestPipeline/4/",
+    "changeSets": [],
+    "culprits": [],
+    "nextBuild": {
+      "number": 5,
+      "url": "http://localhost:8080/job/TestPipeline/5/"
+    },
+    "previousBuild": {
+      "number": 3,
+      "url": "http://localhost:8080/job/TestPipeline/3/"
+    }
+  },
+  "lastSuccessfulBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "actions": [
+      {
+        "_class": "hudson.model.CauseAction",
+        "causes": [
+          {
+            "_class": "hudson.model.Cause$UserIdCause",
+            "shortDescription": "Started by user Admin",
+            "userId": "admin",
+            "userName": "Admin"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+      },
+      {},
+      {}
+    ],
+    "artifacts": [],
+    "building": false,
+    "description": null,
+    "displayName": "#4",
+    "duration": 16713,
+    "estimatedDuration": 15752,
+    "executor": null,
+    "fullDisplayName": "TestPipeline #4",
+    "id": "4",
+    "keepLog": false,
+    "number": 4,
+    "queueId": 17,
+    "result": "SUCCESS",
+    "timestamp": 1520236432564,
+    "url": "http://localhost:8080/job/TestPipeline/4/",
+    "changeSets": [],
+    "culprits": [],
+    "nextBuild": {
+      "number": 5,
+      "url": "http://localhost:8080/job/TestPipeline/5/"
+    },
+    "previousBuild": {
+      "number": 3,
+      "url": "http://localhost:8080/job/TestPipeline/3/"
+    }
+  },
+  "lastUnstableBuild": null,
+  "lastUnsuccessfulBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "actions": [
+      {
+        "_class": "hudson.model.CauseAction",
+        "causes": [
+          {
+            "_class": "hudson.model.Cause$UserIdCause",
+            "shortDescription": "Started by user Admin",
+            "userId": "admin",
+            "userName": "Admin"
+          }
+        ]
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+      },
+      {},
+      {}
+    ],
+    "artifacts": [],
+    "building": false,
+    "description": "Some desc",
+    "displayName": "#6 [REG]",
+    "duration": 17443,
+    "estimatedDuration": 15752,
+    "executor": null,
+    "fullDisplayName": "TestPipeline #6 [REG]",
+    "id": "6",
+    "keepLog": false,
+    "number": 6,
+    "queueId": 23,
+    "result": "FAILURE",
+    "timestamp": 1520236517513,
+    "url": "http://localhost:8080/job/TestPipeline/6/",
+    "changeSets": [],
+    "culprits": [],
+    "nextBuild": null,
+    "previousBuild": {
+      "number": 5,
+      "url": "http://localhost:8080/job/TestPipeline/5/"
+    }
+  },
+  "nextBuildNumber": 7,
+  "property": [],
+  "queueItem": null,
+  "concurrentBuild": true,
+  "resumeBlocked": false
+}

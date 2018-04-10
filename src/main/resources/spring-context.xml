@@ -7,22 +7,23 @@
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="networkService" class="happy.rabbit.http.NetworkServiceImpl">
+    <context:component-scan base-package="happy.rabbit"/>
+
+    <bean id="networkService" class="happy.rabbit.http.RestJenkinsApi">
         <constructor-arg name="baseUrl" value="${baseUrl}"/>
         <constructor-arg name="username" value="${username}"/>
         <constructor-arg name="password" value="${password}"/>
     </bean>
 
-    <bean id="baseDao" class="happy.rabbit.data.BuildDao">
-        <constructor-arg index="0" ref="sessionFactory"/>
-    </bean>
-
     <bean id="sessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+        <property name="packagesToScan">
+            <list>
+                <value>happy.rabbit</value>
+            </list>
+        </property>
     </bean>
 
     <context:property-placeholder location="environment.properties" />
-
-    <context:component-scan base-package="happy.rabbit"/>
 </beans>

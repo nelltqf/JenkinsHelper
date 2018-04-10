@@ -1,11 +1,16 @@
 package happy.rabbit.utils;
 
 import happy.rabbit.domain.Build;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class Utils {
@@ -25,9 +30,26 @@ public class Utils {
 
     public static JSONObject getJsonObjectFromJenkinsItem(Build item) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("displayName", "#" + item.getNumber() + " [" + item.getFailureReason() + "]");
-        jsonObject.put("description", item.getDescriptor());
+        jsonObject.put("displayName", "#" + item.getId() + " [" + item.getFailureReason() + "]");
+        jsonObject.put("description", item.getDescription());
         jsonObject.put("core:apply", "");
         return jsonObject;
+    }
+
+    public static String readFileToString(String fileName) {
+        try {
+            return new String(Files.readAllBytes(Paths.get(fileName)));
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public static String httpResponseAsString(HttpResponse response) {
+        try {
+            InputStream inputStream = response.getEntity().getContent();
+            return new String(IOUtils.toByteArray(inputStream));
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

@@ -1,6 +1,6 @@
 package happy.rabbit.http;
 
-import org.apache.commons.io.IOUtils;
+import happy.rabbit.utils.Utils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -11,12 +11,15 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 public class Request {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Request.class);
 
     // TODO should this client be static? Threadsafe?
     private HttpClient client = HttpClientBuilder.create().build();
@@ -64,13 +67,7 @@ public class Request {
 
     public String asString() {
         HttpResponse response = executeAndReturnResponse();
-        try {
-            InputStream inputStream = response.getEntity().getContent();
-            return new String(IOUtils.toByteArray(inputStream));
-        } catch (IOException e) {
-            // TODO logging
-            throw new IllegalStateException(e);
-        }
+        return Utils.httpResponseAsString(response);
     }
 
     public JSONObject asJson() {
@@ -86,7 +83,7 @@ public class Request {
             }
             return client.execute(requestBase);
         } catch (IOException e) {
-            // TODO logging
+            LOGGER.error("Error while executing request", e);
             throw new IllegalStateException(e);
         }
     }

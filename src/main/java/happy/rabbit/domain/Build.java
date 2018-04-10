@@ -1,70 +1,69 @@
 package happy.rabbit.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.List;
 
-@Entity(name = "build")
-@Table(name = "build")
+@Table(name = "BUILD")
+@Entity
 public class Build {
 
-    @Id
-    private Long id;
+    @EmbeddedId
+    private BuildId id = new BuildId();
 
-    private Long number;
+    private String description;
 
-    private Job job;
-
-    private String descriptor;
-
-    private boolean isBroken;
+    private Result result;
 
     private String failureReason;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime published;
+    private Long timestamp;
 
     /**
      * Stores duration in ms
      */
     private Long duration;
 
-    @OneToMany
-    private List<Test> errors;
+    @ManyToMany
+    private List<Test> tests;
+    private String causeJobName;
+    private Long causeNumber;
 
     public Build() {
 
     }
 
-    public Build(String jobName, Long id) {
-        this.job = new Job(jobName);
-        this.number = id;
+    public Build(Job job, Long id) {
+        this.id.setId(id);
+        this.id.setJob(job);
     }
 
-    public Long getNumber() {
-        return number;
+    public BuildId getBuildId() {
+        return id;
     }
 
-    public void setNumber(Long number) {
-        this.number = number;
+    public Long getId() {
+        return id.getId();
     }
 
-    public LocalDateTime getPublished() {
-        return published;
+    public void setId(Long id) {
+        this.id.setId(id);
     }
 
-    public void setPublished(LocalDateTime published) {
-        this.published = published;
+    public Long getTimestamp() {
+        return timestamp;
     }
 
-    public String getDescriptor() {
-        return descriptor;
+    public void setTimestamp(Long published) {
+        this.timestamp = published;
     }
 
-    public void setDescriptor(String content) {
-        this.descriptor = content;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String content) {
+        this.description = content;
     }
 
     public String getFailureReason() {
@@ -76,11 +75,11 @@ public class Build {
     }
 
     public Job getJob() {
-        return job;
+        return id.getJob();
     }
 
-    public void setJob(String jobName) {
-        this.job = new Job(jobName);
+    public void setJob(Job job) {
+        this.id.setJob(job);
     }
 
     public Long getDuration() {
@@ -91,24 +90,80 @@ public class Build {
         this.duration = duration;
     }
 
-    public List<Test> getErrors() {
-        return errors;
+    public List<Test> getTests() {
+        return tests;
     }
 
-    public void setErrors(List<Test> errors) {
-        this.errors = errors;
+    public void setTests(List<Test> errors) {
+        this.tests = errors;
     }
 
-    public boolean isBroken() {
-        return isBroken;
+    public Result getResult() {
+        return result;
     }
 
-    public void setIsBroken(boolean broken) {
-        isBroken = broken;
+    public void setResult(Result result) {
+        this.result = result;
+    }
+
+    public void setDisplayName(String displayName) {
+        if (displayName.contains("[") && displayName.contains("]")) {
+            this.failureReason = displayName.substring(displayName.indexOf('[') + 1, displayName.lastIndexOf(']'));
+        }
     }
 
     @Override
     public String toString() {
-        return "#" + number;
+        return id.toString();
+    }
+
+    public boolean isBroken() {
+        return result == Result.FAILURE;
+    }
+
+    public String getCauseJobName() {
+        return causeJobName;
+    }
+
+    public Long getCauseNumber() {
+        return causeNumber;
+    }
+
+    @Embeddable
+    public class BuildId implements Serializable {
+
+        @ManyToOne
+        private Job job;
+
+        private Long id;
+
+        public BuildId() {
+        }
+
+        public BuildId(Job job, Long id) {
+            this.job = job;
+            this.id = id;
+        }
+
+        public Job getJob() {
+            return job;
+        }
+
+        public void setJob(Job job) {
+            this.job = job;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return job + " #" + id;
+        }
     }
 }
