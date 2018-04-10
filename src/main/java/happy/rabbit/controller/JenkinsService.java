@@ -7,11 +7,14 @@ import happy.rabbit.domain.Test;
 import happy.rabbit.http.JenkinsApi;
 import happy.rabbit.parser.Parser;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +44,13 @@ public class JenkinsService {
     }
 
     public Job loadJob(String jobName) {
-        String json = jenkinsApi.getJobJson(jobName);
+        HttpResponse response = jenkinsApi.getJobJson(jobName);
+        // TODO separate method
+        if (response.getStatusLine().getStatusCode() != 200) {
+            // TODO handle this
+            throw new IllegalArgumentException("Can't get data from Jenkins");
+        }
+        String json = response.toString();
         Job job = Parser.parseJob(json);
         dao.saveOrUpdateJob(job);
         return job;
@@ -71,10 +80,7 @@ public class JenkinsService {
                 .stream()
                 .filter(Job::isActive)
                 .collect(Collectors.toList());
-        jobs.forEach(job -> {
-                    Job jobFromJenkins = Parser.parseJob(jenkinsApi.getJobJson(job.getDisplayName()));
-                    dao.saveOrUpdateJob(jobFromJenkins);
-                });
+        jobs.forEach(job -> loadJob(job.getDisplayName()));
         List<Build> failedBuilds = jobs.stream()
                 .filter(Job::isPipeline)
                 .map(Job::getBuilds)

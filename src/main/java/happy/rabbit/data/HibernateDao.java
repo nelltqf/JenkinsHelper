@@ -5,6 +5,7 @@ import happy.rabbit.domain.Job;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,21 +13,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
+@Component
 public class HibernateDao implements Dao {
 
     private static final Logger LOGGER = Logger.getLogger(HibernateDao.class);
 
     @Autowired
-    private org.hibernate.SessionFactory sessionFactory;
+    private HibernateUtil hibernateUtil;
 
-    public HibernateDao(org.hibernate.SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    @Autowired
+    public HibernateDao(HibernateUtil hibernateUtil) {
+        this.hibernateUtil = hibernateUtil;
     }
 
     @Override
     public Build getBuild(Build.BuildId buildId) {
         try {
-            return (Build) getCurrentSession().get(Build.class, buildId);
+            return (Build) hibernateUtil.getCurrentSession().get(Build.class, buildId);
         } catch (Exception e) {
             throw new IllegalStateException("Can't find build  " + buildId);
         }
@@ -35,7 +38,7 @@ public class HibernateDao implements Dao {
     @Override
     public Job getJob(String jobName) {
         try {
-            return (Job) getCurrentSession().get(Job.class, jobName);
+            return (Job) hibernateUtil.getCurrentSession().get(Job.class, jobName);
         } catch (Exception e) {
             throw new IllegalStateException("Can't find Job with name = " + jobName, e);
         }
@@ -47,7 +50,7 @@ public class HibernateDao implements Dao {
             assert build.getId() != null;
             assert build.getJob() != null;
 
-            Session session = getCurrentSession();
+            Session session = hibernateUtil.getCurrentSession();
             Transaction transaction = session.beginTransaction();
             session.saveOrUpdate(build);
             transaction.commit();
@@ -61,7 +64,7 @@ public class HibernateDao implements Dao {
     @Override
     public Job saveOrUpdateJob(Job job) {
         try {
-            Session session = getCurrentSession();
+            Session session = hibernateUtil.getCurrentSession();
             if (job.isPipeline()) {
                 List<Build> allBuilds = new ArrayList<>(job.getBuilds());
                 allBuilds.addAll(job.getTestJobs()
@@ -82,15 +85,6 @@ public class HibernateDao implements Dao {
 
     @Override
     public List<Job> getAllJobs() {
-        return getCurrentSession().createCriteria(Job.class).list();
-    }
-
-    private Session getCurrentSession() {
-        try {
-            return this.sessionFactory.getCurrentSession();
-        } catch (HibernateException e) {
-            LOGGER.warn("Reopening session", e);
-            return this.sessionFactory.openSession();
-        }
+        return hibernateUtil.getCurrentSession().createCriteria(Job.class).list();
     }
 }

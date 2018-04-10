@@ -1,6 +1,7 @@
 package happy.rabbit.http;
 
 import happy.rabbit.domain.Build;
+import org.apache.http.HttpResponse;
 import org.springframework.context.annotation.ImportResource;
 
 @ImportResource(value = "environment.properties")
@@ -12,7 +13,7 @@ public interface JenkinsApi {
     String GET_CRUMB = "crumbIssuer/api/json";
     String GET_ERRORS = "/testReport/api/json?depth=1";
 
-    String getJobJson(String jobName);
+    HttpResponse getJobJson(String jobName);
 
     void fillJobNameAndDescription(Build jenkinsItem);
 

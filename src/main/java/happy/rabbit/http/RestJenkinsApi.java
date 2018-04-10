@@ -1,6 +1,7 @@
 package happy.rabbit.http;
 
 import happy.rabbit.domain.Build;
+import org.apache.http.HttpResponse;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,11 @@ public class RestJenkinsApi implements JenkinsApi {
         return jenkinsCrumb;
     }
 
-    public String getJobJson(String jobName) {
+    public HttpResponse getJobJson(String jobName) {
         try {
             return Request.get(baseUrl + JOB + jobName + GET_JOB_JSON)
                     .withBasicAuth(username, password)
-                    .asString();
+                    .asResponse();
         } catch (Exception e) {
             LOGGER.error("Exception during getting job " + jobName + " from Jenkins", e);
             throw new IllegalStateException(e);
