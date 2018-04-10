@@ -12,6 +12,8 @@ public interface Dao {
 
     Build saveOrUpdateBuild(Build build);
 
+    void saveBuilds(List<Build> builds);
+
     Job saveOrUpdateJob(Job job);
 
     List<Job> getAllJobs();

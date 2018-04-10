@@ -62,6 +62,11 @@ public class HibernateDao implements Dao {
     }
 
     @Override
+    public void saveBuilds(List<Build> builds) {
+        builds.forEach(this::saveOrUpdateBuild);
+    }
+
+    @Override
     public Job saveOrUpdateJob(Job job) {
         try {
             Session session = hibernateUtil.getCurrentSession();

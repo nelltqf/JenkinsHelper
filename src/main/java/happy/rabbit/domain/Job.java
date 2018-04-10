@@ -20,7 +20,7 @@ public class Job {
     @Column(name = "IS_ACTIVE")
     private boolean isActive = true;
 
-    @OneToMany
+    @OneToMany(mappedBy = "id.job")
     private List<Build> builds = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)

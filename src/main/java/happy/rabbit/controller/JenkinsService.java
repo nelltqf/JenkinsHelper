@@ -6,6 +6,7 @@ import happy.rabbit.domain.Job;
 import happy.rabbit.domain.Test;
 import happy.rabbit.http.JenkinsApi;
 import happy.rabbit.parser.Parser;
+import happy.rabbit.utils.Utils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +51,12 @@ public class JenkinsService {
             // TODO handle this
             throw new IllegalArgumentException("Can't get data from Jenkins");
         }
-        String json = response.toString();
-        Job job = Parser.parseJob(json);
-        dao.saveOrUpdateJob(job);
-        return job;
+        Job jobFromJenkins = Parser.parseJob(Utils.httpResponseAsString(response));
+        Job jobFromDB = dao.getJob(jobName);
+        dao.saveBuilds(jobFromJenkins.getBuilds());
+        // TODO investigate why it's not saved automatically
+        jobFromDB.setBuilds(jobFromJenkins.getBuilds());
+        return jobFromDB;
     }
 
     public void updateJenkins(List<Build> jenkinsItems, String jobName) {
