@@ -16,6 +16,7 @@ public class Build {
 
     private String failureReason;
 
+    // TODO make real date
     private Long timestamp;
 
     /**
@@ -23,11 +24,11 @@ public class Build {
      */
     private Long duration;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "testId.build")
     private List<Test> tests;
 
-    @Embedded
-    private BuildId cause = new BuildId();
+    @OneToOne
+    private Build cause;
 
     public Build() {
 
@@ -36,6 +37,11 @@ public class Build {
     public Build(Job job, Long id) {
         this.id.setId(id);
         this.id.setJob(job);
+    }
+
+    public Build(BuildId causeId) {
+        this.id.setId(causeId.getId());
+        this.id.setJob(causeId.getJob());
     }
 
     public BuildId getBuildId() {
@@ -130,6 +136,10 @@ public class Build {
     }
 
     public void setCause(BuildId causeId) {
-        this.cause = causeId;
+        this.cause = new Build(causeId);
+    }
+
+    public Build getCauseBuild() {
+        return cause;
     }
 }

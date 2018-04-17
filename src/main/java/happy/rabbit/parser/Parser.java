@@ -46,8 +46,11 @@ public class Parser {
                             + "/actions").get(0).elements();
                     it.next();
                     JsonNode cause = it.next().get(0);
-                    if (cause.get("shortDescription").asText() != null
-                            && !cause.get("shortDescription").asText().startsWith("Started by user")) {
+                    String description = cause.get("shortDescription").asText();
+                    if (description != null
+                            && !description.startsWith("Started by user")
+                            //TODO work with not-straighforward cases
+                            && !description.contains("/")) {
                         BuildId causeId = new BuildId();
                         causeId.setId(Long.valueOf(cause.get("upstreamBuild").asText()));
                         causeId.setJob(new Job(cause.get("upstreamProject").asText()));

@@ -47,14 +47,21 @@ public class HibernateDao implements Dao {
 
     @Override
     public Build saveOrUpdateBuild(Build build) {
-        try {
-            assert build.getId() != null;
-            assert build.getJob() != null;
+        assert build.getId() != null;
+        assert build.getJob() != null;
 
-            Session session = hibernateUtil.getCurrentSession();
-            Transaction transaction = session.beginTransaction();
+        Session session = hibernateUtil.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            // TODO pain guts pan
+            if (build.getCauseBuild() != null) {
+                session.saveOrUpdate(build.getCauseBuild());
+            }
             session.saveOrUpdate(build);
             transaction.commit();
+        } catch (NonUniqueObjectException e) {
+            // TODO prevent this
+            transaction.rollback();
         } catch (Exception e) {
             throw new IllegalStateException("Can't update Build for job " + build.getJob()
                     + " with number = " + build.getId(), e);

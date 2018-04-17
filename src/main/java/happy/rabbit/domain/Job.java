@@ -80,8 +80,6 @@ public class Job {
 
     @Override
     public String toString() {
-        return "Job{" +
-                "displayName='" + displayName + '\'' +
-                '}';
+        return displayName;
     }
 }

@@ -1,13 +1,14 @@
 package happy.rabbit.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 
+@Table(name = "TEST")
 @Entity
 public class Test {
 
-    @Id
-    private String name;
+    @EmbeddedId
+    private TestId testId = new TestId();
 
     private String errorDetails;
 
@@ -16,11 +17,19 @@ public class Test {
     private Status status;
 
     public String getName() {
-        return name;
+        return testId.testName;
     }
 
     public void setName(String testName) {
-        this.name = testName;
+        this.testId.setTestName(testName);
+    }
+
+    public TestId getTestId() {
+        return testId;
+    }
+
+    public void setTestId(TestId testId) {
+        this.testId = testId;
     }
 
     public String getErrorDetails() {
@@ -45,5 +54,38 @@ public class Test {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public void setBuild(Build build) {
+        testId.setBuild(build);
+    }
+
+    @Embeddable
+    public class TestId implements Serializable {
+
+        @ManyToOne
+        private Build build;
+
+        private String testName;
+
+        public BuildId getBuildId() {
+            return build.getBuildId();
+        }
+
+        public Build getBuild() {
+            return build;
+        }
+
+        public void setBuild(Build build) {
+            this.build = build;
+        }
+
+        public String getTestName() {
+            return testName;
+        }
+
+        public void setTestName(String testName) {
+            this.testName = testName;
+        }
     }
 }
