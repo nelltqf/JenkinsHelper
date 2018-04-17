@@ -1,7 +1,6 @@
 package happy.rabbit.domain;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Table(name = "BUILD")
@@ -26,8 +25,9 @@ public class Build {
 
     @ManyToMany
     private List<Test> tests;
-    private String causeJobName;
-    private Long causeNumber;
+
+    @Embedded
+    private BuildId cause = new BuildId();
 
     public Build() {
 
@@ -121,49 +121,15 @@ public class Build {
         return result == Result.FAILURE;
     }
 
-    public String getCauseJobName() {
-        return causeJobName;
+    public Job getCauseJobName() {
+        return cause.getJob();
     }
 
     public Long getCauseNumber() {
-        return causeNumber;
+        return cause.getId();
     }
 
-    @Embeddable
-    public class BuildId implements Serializable {
-
-        @ManyToOne
-        private Job job;
-
-        private Long id;
-
-        public BuildId() {
-        }
-
-        public BuildId(Job job, Long id) {
-            this.job = job;
-            this.id = id;
-        }
-
-        public Job getJob() {
-            return job;
-        }
-
-        public void setJob(Job job) {
-            this.job = job;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        @Override
-        public String toString() {
-            return job + " #" + id;
-        }
+    public void setCause(BuildId causeId) {
+        this.cause = causeId;
     }
 }

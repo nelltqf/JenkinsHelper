@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
 import happy.rabbit.domain.Test;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Parser {
@@ -34,6 +36,30 @@ public class Parser {
     public static Job parseJob(String json) {
         Job job = parseJson(json, Job.class);
         job.getBuilds().forEach(build -> build.setJob(job));
+
+        if (!job.isPipeline()) {
+            try {
+                JsonNode jsonNode = CUSTOM_MAPPER.readTree(new BufferedReader(new StringReader(json)));
+                job.getBuilds().forEach(build -> {
+
+                    Iterator<JsonNode> it = jsonNode.at("/builds/" + (job.getBuilds().size() - build.getId())
+                            + "/actions").get(0).elements();
+                    it.next();
+                    JsonNode cause = it.next().get(0);
+                    if (cause.get("shortDescription").asText() != null
+                            && !cause.get("shortDescription").asText().startsWith("Started by user")) {
+                        BuildId causeId = new BuildId();
+                        causeId.setId(Long.valueOf(cause.get("upstreamBuild").asText()));
+                        causeId.setJob(new Job(cause.get("upstreamProject").asText()));
+                        build.setCause(causeId);
+                    }
+                });
+                System.out.println(jsonNode);
+            } catch (IOException e) {
+                LOGGER.error("Error while parsing: ", e);
+                throw new IllegalStateException(e);
+            }
+        }
         return job;
     }
 
@@ -44,8 +70,9 @@ public class Parser {
             // TODO investigate how it works for multi-suites
             // TODO refactor
             jsonNode = jsonNode.get("childReports").findValue("suites");
-            for (JsonNode node: jsonNode) {
-                tests.addAll(CUSTOM_MAPPER.readValue(node.get("cases").toString(), new TypeReference<List<Test>>(){}));
+            for (JsonNode node : jsonNode) {
+                tests.addAll(CUSTOM_MAPPER.readValue(node.get("cases").toString(), new TypeReference<List<Test>>() {
+                }));
             }
             return tests;
         } catch (IOException e) {
