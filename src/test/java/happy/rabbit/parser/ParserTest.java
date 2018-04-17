@@ -1,6 +1,7 @@
 package happy.rabbit.parser;
 
 import happy.rabbit.domain.Job;
+import happy.rabbit.domain.TestResult;
 import org.junit.Test;
 
 import java.util.List;
@@ -37,8 +38,8 @@ public class ParserTest {
 
     @Test
     public void parseTestResults() {
-        List<happy.rabbit.domain.Test> tests = Parser.parseTests(TESTS_JSON);
-        assertThat(tests).isNotEmpty();
+        List<TestResult> testResults = Parser.parseTests(TESTS_JSON);
+        assertThat(testResults).isNotEmpty();
     }
 
     @Test

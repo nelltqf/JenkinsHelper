@@ -2,7 +2,7 @@ package happy.rabbit.controller;
 
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
-import happy.rabbit.domain.Test;
+import happy.rabbit.domain.TestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -70,7 +70,7 @@ public class JenkinsController {
     @RequestMapping(value = "/{jobName}/{id}/errors",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    private List<Test> collectErrors(@PathVariable String jobName, @PathVariable Long id) {
+    private List<TestResult> collectErrors(@PathVariable String jobName, @PathVariable Long id) {
         return jenkinsService.getErrorsForPipelineRun(jobName, id);
     }
 }

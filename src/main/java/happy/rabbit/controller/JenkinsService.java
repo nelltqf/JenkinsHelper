@@ -4,7 +4,7 @@ import happy.rabbit.data.Dao;
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
-import happy.rabbit.domain.Test;
+import happy.rabbit.domain.TestResult;
 import happy.rabbit.http.JenkinsApi;
 import happy.rabbit.parser.Parser;
 import happy.rabbit.utils.Utils;
@@ -66,7 +66,7 @@ public class JenkinsService {
         });
     }
 
-    public List<Test> getErrorsForPipelineRun(String jobName, Long id) {
+    public List<TestResult> getErrorsForPipelineRun(String jobName, Long id) {
         Job job = getJobFromDB(jobName);
         Build build = job.getBuilds().stream().filter(jobBuild -> jobBuild.getId().equals(id))
                 .findFirst()
@@ -78,7 +78,7 @@ public class JenkinsService {
         throw new NotImplementedException("Can't get errors from pipeline yet");
     }
 
-    public void analyzeAndUpdateAllActivePipelines() {
+    public List<TestResult> analyzeAndUpdateAllActivePipelines() {
         List<Job> jobs = dao.getAllJobs()
                 .stream()
                 .filter(Job::isActive)
@@ -92,7 +92,7 @@ public class JenkinsService {
 //                .filter(build -> build.getFailureReason() == null || build.getFailureReason().isEmpty())
                 .map(Build::getBuildId)
                 .collect(Collectors.toList());
-        List<Test> tests = jobs.stream()
+        List<TestResult> testResults = jobs.stream()
                 .filter(job -> !job.isPipeline())
                 .map(Job::getBuilds)
                 .flatMap(Collection::stream)
@@ -102,15 +102,14 @@ public class JenkinsService {
 //                .filter(test -> test.getTestId().getBuild() != null
 //                        && failedBuilds.contains(test.getTestId().getBuildId()))
                 .collect(Collectors.toList());
-        // TODO STUB
-        System.out.println(tests);
+        return testResults;
     }
 
-    private List<Test> getErrorsFromBuild(Build testBuild) {
-        List<Test> tests = Parser.parseTests(jenkinsApi.getErrors(testBuild));
-        testBuild.setTests(tests);
-        tests.forEach(test -> test.setBuild(testBuild.getCauseBuild()));
-        return tests;
+    private List<TestResult> getErrorsFromBuild(Build testBuild) {
+        List<TestResult> testResults = Parser.parseTests(jenkinsApi.getErrors(testBuild));
+        testBuild.setTestResults(testResults);
+        testResults.forEach(test -> test.setBuild(testBuild.getCauseBuild()));
+        return testResults;
     }
 
     private void analyzeAndUpdate(String jobName) {

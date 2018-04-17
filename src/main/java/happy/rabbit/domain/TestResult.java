@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Table(name = "TEST")
 @Entity
-public class Test {
+public class TestResult {
 
     @EmbeddedId
     private TestId testId = new TestId();

@@ -25,7 +25,7 @@ public class Build {
     private Long duration;
 
     @OneToMany(mappedBy = "testId.build")
-    private List<Test> tests;
+    private List<TestResult> testResults;
 
     @OneToOne
     private Build cause;
@@ -96,12 +96,12 @@ public class Build {
         this.duration = duration;
     }
 
-    public List<Test> getTests() {
-        return tests;
+    public List<TestResult> getTestResults() {
+        return testResults;
     }
 
-    public void setTests(List<Test> errors) {
-        this.tests = errors;
+    public void setTestResults(List<TestResult> errors) {
+        this.testResults = errors;
     }
 
     public Result getResult() {
