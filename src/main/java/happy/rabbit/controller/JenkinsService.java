@@ -2,6 +2,7 @@ package happy.rabbit.controller;
 
 import happy.rabbit.data.Dao;
 import happy.rabbit.domain.Build;
+import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
 import happy.rabbit.domain.Test;
 import happy.rabbit.http.JenkinsApi;
@@ -37,7 +38,7 @@ public class JenkinsService {
 
     public Build getBuild(String jobName, Long jobId) {
         Job buildJob = dao.getJob(jobName);
-        return dao.getBuild(new Build().new BuildId(buildJob, jobId));
+        return dao.getBuild(new BuildId(buildJob, jobId));
     }
 
     public Job getJobFromDB(String jobName) {

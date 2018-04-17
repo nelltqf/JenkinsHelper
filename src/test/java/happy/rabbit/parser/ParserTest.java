@@ -13,20 +13,26 @@ public class ParserTest {
 
     @Test
     public void parseJob() {
-        Job job = Parser.parseJson(JOB_JSON, Job.class);
+        Job job = Parser.parseJob(JOB_JSON);
         assertThat(job).hasNoNullFieldsOrPropertiesExcept("testJobs");
     }
 
     @Test
     public void parseJobName() {
-        Job job = Parser.parseJson(JOB_JSON, Job.class);
+        Job job = Parser.parseJob(JOB_JSON);
         assertThat(job.getDisplayName()).isEqualToIgnoringCase(PIPELINE_NAME);
     }
 
     @Test
     public void parseJobBuilds() {
-        Job job = Parser.parseJson(JOB_JSON, Job.class);
+        Job job = Parser.parseJob(JOB_JSON);
         assertThat(job.getBuilds()).hasSize(6);
+    }
+
+    @Test
+    public void parseTestJobBuilds() {
+        Job job = Parser.parseJob(TEST_JOB_JSON);
+        assertThat(job.getBuilds().get(0).getCauseJobName().getDisplayName()).isEqualTo("TestPipeline");
     }
 
     @Test

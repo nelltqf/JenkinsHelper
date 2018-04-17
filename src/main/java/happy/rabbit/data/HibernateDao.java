@@ -1,6 +1,7 @@
 package happy.rabbit.data;
 
 import happy.rabbit.domain.Build;
+import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
@@ -27,7 +28,7 @@ public class HibernateDao implements Dao {
     }
 
     @Override
-    public Build getBuild(Build.BuildId buildId) {
+    public Build getBuild(BuildId buildId) {
         try {
             return (Build) hibernateUtil.getCurrentSession().get(Build.class, buildId);
         } catch (Exception e) {
