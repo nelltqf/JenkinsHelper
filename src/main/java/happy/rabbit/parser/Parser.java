@@ -54,7 +54,7 @@ public class Parser {
                         BuildId causeId = new BuildId();
                         causeId.setId(Long.valueOf(cause.get("upstreamBuild").asText()));
                         causeId.setJob(new Job(cause.get("upstreamProject").asText()));
-                        build.setCause(causeId);
+                        build.setCauseId(causeId);
                     }
                 });
                 System.out.println(jsonNode);

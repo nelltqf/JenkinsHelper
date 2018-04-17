@@ -28,7 +28,7 @@ public class Build {
     private List<TestResult> testResults;
 
     @OneToOne
-    private Build cause;
+    private Build causeBuild;
 
     public Build() {
 
@@ -128,18 +128,22 @@ public class Build {
     }
 
     public Job getCauseJobName() {
-        return cause.getJob();
+        return causeBuild.getJob();
     }
 
     public Long getCauseNumber() {
-        return cause.getId();
+        return causeBuild.getId();
     }
 
-    public void setCause(BuildId causeId) {
-        this.cause = new Build(causeId);
+    public void setCauseId(BuildId causeId) {
+        this.causeBuild = new Build(causeId);
     }
 
     public Build getCauseBuild() {
-        return cause;
+        return causeBuild;
+    }
+
+    public void setCauseBuild(Build causeBuild) {
+        this.causeBuild = causeBuild;
     }
 }

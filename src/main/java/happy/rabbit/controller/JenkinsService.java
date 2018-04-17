@@ -78,7 +78,7 @@ public class JenkinsService {
         throw new NotImplementedException("Can't get errors from pipeline yet");
     }
 
-    public List<TestResult> analyzeAndUpdateAllActivePipelines() {
+    public void analyzeAndUpdateAllActivePipelines() {
         List<Job> jobs = dao.getAllJobs()
                 .stream()
                 .filter(Job::isActive)
@@ -102,13 +102,15 @@ public class JenkinsService {
 //                .filter(test -> test.getTestId().getBuild() != null
 //                        && failedBuilds.contains(test.getTestId().getBuildId()))
                 .collect(Collectors.toList());
-        return testResults;
     }
 
     private List<TestResult> getErrorsFromBuild(Build testBuild) {
         List<TestResult> testResults = Parser.parseTests(jenkinsApi.getErrors(testBuild));
-        testBuild.setTestResults(testResults);
-        testResults.forEach(test -> test.setBuild(testBuild.getCauseBuild()));
+        Build causeBuild = testBuild.getCauseBuild();
+        if (causeBuild != null) {
+            causeBuild.setTestResults(testResults);
+            testResults.forEach(test -> test.setBuild(causeBuild));
+        }
         return testResults;
     }
 

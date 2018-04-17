@@ -2,7 +2,6 @@ package happy.rabbit.controller;
 
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
-import happy.rabbit.domain.TestResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +48,18 @@ public class JenkinsServiceTest {
         jenkinsService.saveNewJob(testJob);
         jenkinsService.saveNewJob(pipeline);
         assertThat(jenkinsService.getJobFromDB(pipeline.getDisplayName())).isNotNull();
-        List<TestResult> testResults = jenkinsService.analyzeAndUpdateAllActivePipelines();
+        jenkinsService.analyzeAndUpdateAllActivePipelines();
+
+        testJob.getBuilds()
+                .stream()
+                .filter(build -> build.getCauseBuild() != null)
+                .forEach(build -> {
+                    System.out.println(build.getCauseBuild());
+                    build.getCauseBuild().getTestResults()
+                            .forEach(testResult ->
+                                    System.out.println(testResult.getName() + "\t\t\t" + testResult.getStatus()));
+                    System.out.println();
+                });
     }
 
     private Job getJob() {

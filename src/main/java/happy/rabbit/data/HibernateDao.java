@@ -55,7 +55,12 @@ public class HibernateDao implements Dao {
         try {
             // TODO pain guts pan
             if (build.getCauseBuild() != null) {
-                session.saveOrUpdate(build.getCauseBuild());
+                Build cause = getBuild(build.getCauseBuild().getBuildId());
+                if (cause != null) {
+                    build.setCauseBuild(cause);
+                } else {
+                    session.saveOrUpdate(build.getCauseBuild());
+                }
             }
             session.saveOrUpdate(build);
             transaction.commit();
