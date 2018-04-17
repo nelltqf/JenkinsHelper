@@ -4,7 +4,7 @@ import happy.rabbit.data.Dao;
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
-import happy.rabbit.domain.Test;
+import happy.rabbit.domain.TestResult;
 import happy.rabbit.http.JenkinsApi;
 import happy.rabbit.parser.Parser;
 import happy.rabbit.utils.Utils;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,7 +66,7 @@ public class JenkinsService {
         });
     }
 
-    public List<Test> getErrorsForPipelineRun(String jobName, Long id) {
+    public List<TestResult> getErrorsForPipelineRun(String jobName, Long id) {
         Job job = getJobFromDB(jobName);
         Build build = job.getBuilds().stream().filter(jobBuild -> jobBuild.getId().equals(id))
                 .findFirst()
@@ -85,34 +84,34 @@ public class JenkinsService {
                 .filter(Job::isActive)
                 .collect(Collectors.toList());
         jobs.forEach(job -> loadJob(job.getDisplayName()));
-        List<Build> failedBuilds = jobs.stream()
+        List<BuildId> failedBuilds = jobs.stream()
                 .filter(Job::isPipeline)
                 .map(Job::getBuilds)
                 .flatMap(Collection::stream)
                 .filter(Build::isBroken)
-                .filter(build -> build.getFailureReason() == null || build.getFailureReason().isEmpty())
+//                .filter(build -> build.getFailureReason() == null || build.getFailureReason().isEmpty())
+                .map(Build::getBuildId)
                 .collect(Collectors.toList());
-
+        List<TestResult> testResults = jobs.stream()
+                .filter(job -> !job.isPipeline())
+                .map(Job::getBuilds)
+                .flatMap(Collection::stream)
+                .map(this::getErrorsFromBuild)
+                .flatMap(Collection::stream)
+                // TODO will work after overriding equals in BuildID
+//                .filter(test -> test.getTestId().getBuild() != null
+//                        && failedBuilds.contains(test.getTestId().getBuildId()))
+                .collect(Collectors.toList());
     }
 
-    public List<Build> findTestBuildsForPipelineRun(Build pipelineBuild) {
-        List<Build> testBuilds = new ArrayList<>();
-        pipelineBuild.getJob().getTestJobs().forEach(testJob -> {
-            Build testResultsBuild = testJob.getBuilds().stream()
-                    .filter(testBuild -> pipelineBuild.getJob().getDisplayName().equals(testBuild.getCauseJobName()))
-                    .filter(testBuild -> pipelineBuild.getId().equals(testBuild.getCauseNumber()))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Can't find any build in "
-                            + testJob.getDisplayName()
-                            + "that was triggered by " + pipelineBuild));
-            testBuilds.add(testResultsBuild);
-
-        });
-        return testBuilds;
-    }
-
-    private List<Test> getErrorsFromBuild(Build testBuild) {
-        return Parser.parseTests(jenkinsApi.getErrors(testBuild));
+    private List<TestResult> getErrorsFromBuild(Build testBuild) {
+        List<TestResult> testResults = Parser.parseTests(jenkinsApi.getErrors(testBuild));
+        Build causeBuild = testBuild.getCauseBuild();
+        if (causeBuild != null) {
+            causeBuild.setTestResults(testResults);
+            testResults.forEach(test -> test.setBuild(causeBuild));
+        }
+        return testResults;
     }
 
     private void analyzeAndUpdate(String jobName) {

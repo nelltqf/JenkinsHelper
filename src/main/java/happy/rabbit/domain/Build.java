@@ -16,6 +16,7 @@ public class Build {
 
     private String failureReason;
 
+    // TODO make real date
     private Long timestamp;
 
     /**
@@ -23,11 +24,11 @@ public class Build {
      */
     private Long duration;
 
-    @ManyToMany
-    private List<Test> tests;
+    @OneToMany(mappedBy = "testId.build")
+    private List<TestResult> testResults;
 
-    @Embedded
-    private BuildId cause = new BuildId();
+    @OneToOne
+    private Build causeBuild;
 
     public Build() {
 
@@ -36,6 +37,11 @@ public class Build {
     public Build(Job job, Long id) {
         this.id.setId(id);
         this.id.setJob(job);
+    }
+
+    public Build(BuildId causeId) {
+        this.id.setId(causeId.getId());
+        this.id.setJob(causeId.getJob());
     }
 
     public BuildId getBuildId() {
@@ -90,12 +96,12 @@ public class Build {
         this.duration = duration;
     }
 
-    public List<Test> getTests() {
-        return tests;
+    public List<TestResult> getTestResults() {
+        return testResults;
     }
 
-    public void setTests(List<Test> errors) {
-        this.tests = errors;
+    public void setTestResults(List<TestResult> errors) {
+        this.testResults = errors;
     }
 
     public Result getResult() {
@@ -122,14 +128,22 @@ public class Build {
     }
 
     public Job getCauseJobName() {
-        return cause.getJob();
+        return causeBuild.getJob();
     }
 
     public Long getCauseNumber() {
-        return cause.getId();
+        return causeBuild.getId();
     }
 
-    public void setCause(BuildId causeId) {
-        this.cause = causeId;
+    public void setCauseId(BuildId causeId) {
+        this.causeBuild = new Build(causeId);
+    }
+
+    public Build getCauseBuild() {
+        return causeBuild;
+    }
+
+    public void setCauseBuild(Build causeBuild) {
+        this.causeBuild = causeBuild;
     }
 }

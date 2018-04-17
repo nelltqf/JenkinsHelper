@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
-import happy.rabbit.domain.Test;
+import happy.rabbit.domain.TestResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +46,15 @@ public class Parser {
                             + "/actions").get(0).elements();
                     it.next();
                     JsonNode cause = it.next().get(0);
-                    if (cause.get("shortDescription").asText() != null
-                            && !cause.get("shortDescription").asText().startsWith("Started by user")) {
+                    String description = cause.get("shortDescription").asText();
+                    if (description != null
+                            && !description.startsWith("Started by user")
+                            //TODO work with not-straighforward cases
+                            && !description.contains("/")) {
                         BuildId causeId = new BuildId();
                         causeId.setId(Long.valueOf(cause.get("upstreamBuild").asText()));
                         causeId.setJob(new Job(cause.get("upstreamProject").asText()));
-                        build.setCause(causeId);
+                        build.setCauseId(causeId);
                     }
                 });
                 System.out.println(jsonNode);
@@ -63,18 +66,18 @@ public class Parser {
         return job;
     }
 
-    public static List<Test> parseTests(String json) {
-        List<Test> tests = new ArrayList<>();
+    public static List<TestResult> parseTests(String json) {
+        List<TestResult> testResults = new ArrayList<>();
         try {
             JsonNode jsonNode = CUSTOM_MAPPER.readTree(new BufferedReader(new StringReader(json)));
             // TODO investigate how it works for multi-suites
             // TODO refactor
             jsonNode = jsonNode.get("childReports").findValue("suites");
             for (JsonNode node : jsonNode) {
-                tests.addAll(CUSTOM_MAPPER.readValue(node.get("cases").toString(), new TypeReference<List<Test>>() {
+                testResults.addAll(CUSTOM_MAPPER.readValue(node.get("cases").toString(), new TypeReference<List<TestResult>>() {
                 }));
             }
-            return tests;
+            return testResults;
         } catch (IOException e) {
             LOGGER.error("Error while parsing: ", e);
             throw new IllegalStateException(e);

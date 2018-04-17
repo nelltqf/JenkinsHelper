@@ -49,6 +49,17 @@ public class JenkinsServiceTest {
         jenkinsService.saveNewJob(pipeline);
         assertThat(jenkinsService.getJobFromDB(pipeline.getDisplayName())).isNotNull();
         jenkinsService.analyzeAndUpdateAllActivePipelines();
+
+        testJob.getBuilds()
+                .stream()
+                .filter(build -> build.getCauseBuild() != null)
+                .forEach(build -> {
+                    System.out.println(build.getCauseBuild());
+                    build.getCauseBuild().getTestResults()
+                            .forEach(testResult ->
+                                    System.out.println(testResult.getName() + "\t\t\t" + testResult.getStatus()));
+                    System.out.println();
+                });
     }
 
     private Job getJob() {
