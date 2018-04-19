@@ -1,5 +1,7 @@
 package happy.rabbit.domain;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -64,6 +66,7 @@ public class TestResult {
     public class TestId implements Serializable {
 
         @ManyToOne
+        @Cascade(org.hibernate.annotations.CascadeType.ALL)
         private Build build;
 
         private String testName;

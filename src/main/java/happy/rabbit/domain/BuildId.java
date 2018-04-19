@@ -1,5 +1,7 @@
 package happy.rabbit.domain;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
@@ -8,6 +10,7 @@ import java.io.Serializable;
 public class BuildId implements Serializable {
 
     @ManyToOne
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Job job;
 
     private Long id;

@@ -1,5 +1,7 @@
 package happy.rabbit.domain;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class Build {
     private Long duration;
 
     @OneToMany(mappedBy = "testId.build")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<TestResult> testResults;
 
     @OneToOne
