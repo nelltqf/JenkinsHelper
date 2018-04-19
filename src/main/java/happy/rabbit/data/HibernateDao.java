@@ -5,17 +5,23 @@ import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-@Component
+@Repository
+@Transactional
 public class HibernateDao implements Dao {
 
     private static final Logger LOGGER = Logger.getLogger(HibernateDao.class);
 
-    @Autowired
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private HibernateUtil hibernateUtil;
 
     @Autowired
@@ -46,7 +52,8 @@ public class HibernateDao implements Dao {
         assert build.getId() != null;
         assert build.getJob() != null;
 
-        hibernateUtil.getCurrentSession().saveOrUpdate(build);
+//        hibernateUtil.getCurrentSession().saveOrUpdate(build);
+        entityManager.persist(build);
         return build;
     }
 

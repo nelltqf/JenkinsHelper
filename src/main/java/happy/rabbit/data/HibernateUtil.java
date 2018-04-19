@@ -23,6 +23,7 @@ public class HibernateUtil {
 
 
     public Session getCurrentSession() {
+
         try {
             if (session == null) {
                 session = this.sessionFactory.openSession();
