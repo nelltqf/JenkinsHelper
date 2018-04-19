@@ -23,7 +23,7 @@ public class Job {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "id.job")
     private List<Build> builds = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Job> testJobs = new ArrayList<>();
 
     public Job() {

@@ -25,8 +25,10 @@
         <property name="jpaDialect" ref="jpaDialect" />
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl}</prop>
                 <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.enable_lazy_load_no_trans">true</prop>
             </props>
         </property>
     </bean>
@@ -41,7 +43,7 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:file:~/db/jenkinshelper;USER=sa;PASSWORD=;" />
+        <property name="url" value="${connection.url}" />
         <property name="username" value="sa" />
         <property name="password" value="" />
     </bean>

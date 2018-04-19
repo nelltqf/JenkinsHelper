@@ -1,9 +1,8 @@
 package happy.rabbit.domain;
 
-import org.hibernate.annotations.Cascade;
-
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Table(name = "TEST")
 @Entity
@@ -19,7 +18,7 @@ public class TestResult {
     private Status status;
 
     public String getName() {
-        return testId.testName;
+        return testId.getTestName();
     }
 
     public void setName(String testName) {
@@ -62,33 +61,4 @@ public class TestResult {
         testId.setBuild(build);
     }
 
-    @Embeddable
-    public class TestId implements Serializable {
-
-        @ManyToOne
-        @Cascade(org.hibernate.annotations.CascadeType.ALL)
-        private Build build;
-
-        private String testName;
-
-        public BuildId getBuildId() {
-            return build.getBuildId();
-        }
-
-        public Build getBuild() {
-            return build;
-        }
-
-        public void setBuild(Build build) {
-            this.build = build;
-        }
-
-        public String getTestName() {
-            return testName;
-        }
-
-        public void setTestName(String testName) {
-            this.testName = testName;
-        }
-    }
 }
