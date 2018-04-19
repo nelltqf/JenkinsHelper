@@ -7,10 +7,14 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @Component
 public class HibernateUtil {
 
     private static final Logger LOGGER = Logger.getLogger(HibernateUtil.class);
+
 
     private SessionFactory sessionFactory;
 
@@ -23,6 +27,7 @@ public class HibernateUtil {
 
 
     public Session getCurrentSession() {
+
         try {
             if (session == null) {
                 session = this.sessionFactory.openSession();

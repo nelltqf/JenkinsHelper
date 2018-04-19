@@ -33,10 +33,10 @@
 
     <properties>
         <apache.http.version>4.3.6</apache.http.version>
-        <hibernateCoreVersion>4.3.0.Final</hibernateCoreVersion>
+        <hibernateCoreVersion>5.2.2.Final</hibernateCoreVersion>
         <hsqldbVersion>2.2.9</hsqldbVersion>
         <springContextVersion>4.0.5.RELEASE</springContextVersion>
-        <springORMVersion>4.0.6.RELEASE</springORMVersion>
+        <springORMVersion>4.3.0.RELEASE</springORMVersion>
         <mockito.version>2.8.47</mockito.version>
         <assertj-core.version>3.8.0</assertj-core.version>
     </properties>
@@ -101,6 +101,11 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <version>${hibernateCoreVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
             <version>${hibernateCoreVersion}</version>
         </dependency>
         <dependency>

@@ -6,15 +6,13 @@ import java.util.List;
 
 public interface Dao {
 
-    Build getBuild(BuildId buildId);
-
     Job getJob(String jobName);
 
-    Build saveOrUpdateBuild(Build build);
+    Build getBuild(BuildId buildId);
 
-    void saveBuilds(List<Build> builds);
+    Job saveJob(Job job);
 
-    Job saveOrUpdateJob(Job job);
+    Build saveBuild(Build build);
 
     List<Job> getAllJobs();
 }

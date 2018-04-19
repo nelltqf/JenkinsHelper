@@ -24,7 +24,7 @@ public class Build {
      */
     private Long duration;
 
-    @OneToMany(mappedBy = "testId.build")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "testId.build")
     private List<TestResult> testResults;
 
     @OneToOne
