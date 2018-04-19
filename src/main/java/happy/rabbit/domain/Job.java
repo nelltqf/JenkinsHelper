@@ -1,7 +1,5 @@
 package happy.rabbit.domain;
 
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +11,7 @@ public class Job {
     private static final String PIPELINE = "WorkflowJob";
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "JOB_ID")
     private String displayName;
 
     @Column(name = "IS_PIPELINE")
@@ -22,12 +20,10 @@ public class Job {
     @Column(name = "IS_ACTIVE")
     private boolean isActive = true;
 
-    @OneToMany(mappedBy = "id.job")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "id.job")
     private List<Build> builds = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Job> testJobs = new ArrayList<>();
 
     public Job() {

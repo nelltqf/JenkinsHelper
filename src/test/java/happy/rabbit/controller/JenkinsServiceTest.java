@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.Collections;
 
@@ -15,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring-context.xml")
-@TransactionConfiguration(defaultRollback = true)
 public class JenkinsServiceTest {
 
     @Autowired
@@ -34,7 +32,8 @@ public class JenkinsServiceTest {
     public void saveBuild() {
         Job job = getJob();
         Build build = new Build(job, 101L);
-        jenkinsService.saveBuilds(Collections.singletonList(build));
+        job.setBuilds(Collections.singletonList(build));
+        jenkinsService.saveNewJob(job);
         assertThat(jenkinsService.getBuild(build.getJob().getDisplayName(), build.getId())).isNotNull();
     }
 

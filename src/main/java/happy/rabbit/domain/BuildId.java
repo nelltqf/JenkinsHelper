@@ -1,16 +1,16 @@
 package happy.rabbit.domain;
 
-import org.hibernate.annotations.Cascade;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 @Embeddable
 public class BuildId implements Serializable {
 
-    @ManyToOne
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "JOB_ID")
     private Job job;
 
     private Long id;

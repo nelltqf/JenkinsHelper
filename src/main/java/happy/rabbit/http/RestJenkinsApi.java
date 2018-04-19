@@ -23,7 +23,7 @@ public class RestJenkinsApi implements JenkinsApi {
         this.baseUrl = baseUrl + "/";
         this.username = username;
         this.password = password;
-        jenkinsCrumb = getJenkinsCrumb();
+//        jenkinsCrumb = getJenkinsCrumb();
     }
 
     public String getJenkinsCrumb() {
