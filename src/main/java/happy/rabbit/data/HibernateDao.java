@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -18,17 +19,8 @@ public class HibernateDao implements Dao {
 
     private static final Logger LOGGER = Logger.getLogger(HibernateDao.class);
 
-    @PersistenceContext
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
-
-    @Override
-    public Build getBuild(BuildId buildId) {
-        try {
-            return entityManager.find(Build.class, buildId);
-        } catch (Exception e) {
-            throw new IllegalStateException("Can't find build  " + buildId);
-        }
-    }
 
     @Override
     public Job getJob(String jobName) {
@@ -40,21 +32,25 @@ public class HibernateDao implements Dao {
     }
 
     @Override
-    public Build saveOrUpdateBuild(Build build) {
-        entityManager.persist(build);
-        return build;
+    public Build getBuild(BuildId buildId) {
+        try {
+            return entityManager.find(Build.class, buildId);
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't find build  " + buildId);
+        }
     }
+
     @Override
-    public Job saveOrUpdateJob(Job job) {
+    public Job saveJob(Job job) {
         entityManager.persist(job);
         return job;
     }
 
     @Override
-    public void saveBuilds(List<Build> builds) {
-        builds.forEach(this::saveOrUpdateBuild);
+    public Build saveBuild(Build build) {
+        entityManager.persist(build);
+        return build;
     }
-
 
     @Override
     public List<Job> getAllJobs() {

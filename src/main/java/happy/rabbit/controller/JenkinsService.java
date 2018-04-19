@@ -32,7 +32,7 @@ public class JenkinsService {
     }
 
     public void saveBuilds(List<Build> builds) {
-        builds.forEach(dao::saveOrUpdateBuild);
+        builds.forEach(dao::saveBuild);
     }
 
     public Build getBuild(String jobName, Long jobId) {
@@ -53,7 +53,7 @@ public class JenkinsService {
         }
         Job jobFromJenkins = Parser.parseJob(Utils.httpResponseAsString(response));
         Job jobFromDB = dao.getJob(jobName);
-        dao.saveBuilds(jobFromJenkins.getBuilds());
+//        dao.saveBuilds(jobFromJenkins.getBuilds());
         // TODO investigate why it's not saved automatically
         jobFromDB.setBuilds(jobFromJenkins.getBuilds());
         return jobFromDB;
@@ -61,7 +61,7 @@ public class JenkinsService {
 
     public void updateJenkins(List<Build> jenkinsItems, String jobName) {
         jenkinsItems.forEach(item -> {
-            dao.saveOrUpdateBuild(item);
+            dao.saveBuild(item);
             jenkinsApi.fillJobNameAndDescription(item);
         });
     }
@@ -122,7 +122,7 @@ public class JenkinsService {
     }
 
     public Job saveNewJob(Job job) {
-        dao.saveOrUpdateJob(job);
+        dao.saveJob(job);
         return job;
     }
 }

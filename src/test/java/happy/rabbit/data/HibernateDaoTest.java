@@ -1,6 +1,5 @@
-package happy.rabbit.controller;
+package happy.rabbit.data;
 
-import happy.rabbit.data.Dao;
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
 import org.junit.Test;
@@ -22,18 +21,18 @@ public class HibernateDaoTest {
 
     @Test
     public void saveEmptyJob() {
-        Job job = getJob();
-        dao.saveOrUpdateJob(job);
+        Job job = new Job("saveEmptyJob");
+        dao.saveJob(job);
 
         assertThat(dao.getJob(job.getDisplayName())).isNotNull();
     }
 
     @Test
     public void saveJobWithBuild() {
-        Job job = getJob();
+        Job job = new Job("saveJobWithBuild");
         Build build = new Build(job, 1L);
         job.setBuilds(Collections.singletonList(build));
-        dao.saveOrUpdateJob(job);
+        dao.saveJob(job);
 
         Job fromDB = dao.getJob(job.getDisplayName());
         assertThat(fromDB).isNotNull();
@@ -41,10 +40,26 @@ public class HibernateDaoTest {
         assertThat(dao.getBuild(build.getBuildId())).isNotNull();
     }
 
-    private Job getJob() {
-        Job job = new Job();
-        job.setDisplayName("TestName");
-        return job;
+    @Test
+    public void saveJobSetBuildsLater() {
+        Job job = new Job("saveJobSetBuildsLater");
+        dao.saveJob(job);
+
+        Build build = new Build(job, 1L);
+        job.setBuilds(Collections.singletonList(build));
+
+        assertThat(dao.getJob(job.getDisplayName()).getBuilds()).isNotEmpty();
+    }
+
+    @Test
+    public void getAllJobs() {
+        Job job1 = new Job("Test");
+        Job job2 = new Job("Test2");
+
+        dao.saveJob(job1);
+        dao.saveJob(job2);
+
+        assertThat(dao.getAllJobs().size()).isGreaterThanOrEqualTo(2);
     }
 
 }
