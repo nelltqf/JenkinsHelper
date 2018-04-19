@@ -24,20 +24,12 @@ public class HibernateDao implements Dao {
 
     @Override
     public Job getJob(String jobName) {
-        try {
-            return entityManager.find(Job.class, jobName);
-        } catch (Exception e) {
-            throw new IllegalStateException("Can't find Job with name = " + jobName, e);
-        }
+        return entityManager.find(Job.class, jobName);
     }
 
     @Override
     public Build getBuild(BuildId buildId) {
-        try {
-            return entityManager.find(Build.class, buildId);
-        } catch (Exception e) {
-            throw new IllegalStateException("Can't find build  " + buildId);
-        }
+        return entityManager.find(Build.class, buildId);
     }
 
     @Override
