@@ -43,4 +43,19 @@ public class BuildId implements Serializable {
     public String toString() {
         return job + " #" + id;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj instanceof BuildId) {
+            BuildId other = (BuildId) obj;
+            return this.id.equals(other.id)
+                    && this.job.equals(other.job);
+        }
+
+        return false;
+    }
 }

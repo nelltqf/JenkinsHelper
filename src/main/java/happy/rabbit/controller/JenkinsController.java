@@ -1,8 +1,6 @@
 package happy.rabbit.controller;
 
-import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
-import happy.rabbit.domain.TestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +11,12 @@ import java.util.List;
 @RestController
 public class JenkinsController {
 
+    private final JenkinsService jenkinsService;
+
     @Autowired
-    private JenkinsService jenkinsService;
+    public JenkinsController(JenkinsService jenkinsService) {
+        this.jenkinsService = jenkinsService;
+    }
 
     @RequestMapping(value = "cron",
             method = RequestMethod.GET)
@@ -23,54 +25,32 @@ public class JenkinsController {
         jenkinsService.analyzeAndUpdateAllActivePipelines();
     }
 
-    @RequestMapping(value = "save",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void saveJenkinsBuilds(@RequestBody List<Build> jenkinsItems) {
-        jenkinsService.saveBuilds(jenkinsItems);
-    }
-
-    @RequestMapping(value = "/{jobName}/{jobId}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public Build getItem(@PathVariable String jobName, @PathVariable Long jobId) {
-        return jenkinsService.getBuild(jobName, jobId);
-    }
-
     @RequestMapping(value = "/addJob",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Job saveJob(@RequestBody Job job) {
+    public Job addNewJob(@RequestBody Job job) {
         return jenkinsService.saveNewJob(job);
     }
 
-    @RequestMapping(value = "/{jobName}/all",
+    @RequestMapping(value = "/all",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Build> getBuildsForJob(@PathVariable String jobName) {
-        return jenkinsService.getJobFromDB(jobName).getBuilds();
+    public List<Job> getAllJobs() {
+        return jenkinsService.getAllJobs();
     }
 
-    @RequestMapping(value = "/{jobName}/load",
+    @RequestMapping(value = "/{jobName}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Build> loadJobWithBuilds(@PathVariable String jobName) {
-        Job job = jenkinsService.loadJob(jobName);
-        return job.getBuilds();
+    public Job getJob(@PathVariable String jobName) {
+        return jenkinsService.getJobInformation(jobName);
     }
 
-    @RequestMapping(value = "/{jobName}/updateDescriptions",
+    @RequestMapping(value = "/{jobName}",
             method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updateDescription(@PathVariable String jobName, @RequestBody List<Build> jenkinsItems) {
-        jenkinsService.updateJenkins(jenkinsItems, jobName);
-    }
-
-    @RequestMapping(value = "/{jobName}/{id}/errors",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    private List<TestResult> collectErrors(@PathVariable String jobName, @PathVariable Long id) {
-        return jenkinsService.getErrorsForPipelineRun(jobName, id);
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Job saveJob(@RequestBody Job job) {
+        return jenkinsService.saveNewJob(job);
     }
 }
