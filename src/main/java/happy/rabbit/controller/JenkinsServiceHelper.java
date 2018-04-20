@@ -41,7 +41,15 @@ public class JenkinsServiceHelper {
     public Job getJobFromJenkins(String jobName) {
         HttpResponse response = jenkinsApi.getJobJson(jobName);
         checkResponseStatusCode(response, "Can't load job from Jenkins: " + jobName);
-        return Parser.parseJob(Utils.httpResponseAsString(response));
+        Job job = Parser.parseJob(Utils.httpResponseAsString(response));
+        if (!job.isPipeline()) {
+            job.getBuilds().forEach(build -> {
+                HttpResponse testResponse = jenkinsApi.getErrors(build);
+                checkResponseStatusCode(response, "Can't get test results from Jenkins: " + build);
+                build.setTestResults(Parser.parseTests(Utils.httpResponseAsString(response)));
+            });
+        }
+        return job;
     }
 
     private void checkResponseStatusCode(HttpResponse response, String errorMessage) {

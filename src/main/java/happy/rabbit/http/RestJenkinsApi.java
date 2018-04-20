@@ -68,11 +68,11 @@ public class RestJenkinsApi implements JenkinsApi {
     }
 
     @Override
-    public String getErrors(Build build) {
+    public HttpResponse getErrors(Build build) {
         try {
             return Request.get(baseUrl + JOB + build.getJob() + "/" + build.getId() + GET_ERRORS)
                     .withBasicAuth(username, password)
-                    .asString();
+                    .asResponse();
         } catch (Exception e) {
             LOGGER.error("Exception during getting test report for " + build + " from Jenkins", e);
             throw new IllegalStateException(e);

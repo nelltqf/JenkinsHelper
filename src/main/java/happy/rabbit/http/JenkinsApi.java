@@ -17,7 +17,7 @@ public interface JenkinsApi {
 
     void fillJobNameAndDescription(Build jenkinsItem);
 
-    String getErrors(Build jenkinsItem);
+    HttpResponse getErrors(Build jenkinsItem);
 
     Long findTestJobId(Build jenkinsItem);
 }
