@@ -62,4 +62,16 @@ public class HibernateDaoTest {
         assertThat(dao.getAllJobs().size()).isGreaterThanOrEqualTo(2);
     }
 
+    @Test
+    public void savePipelineAndTestJob() {
+        Job testJob = new Job("Test");
+        Job pipeline = new Job("TestPipeline");
+
+        pipeline.setTestJobs(Collections.singletonList(testJob));
+
+        dao.saveJob(pipeline);
+
+        assertThat(dao.getAllJobs().size()).isGreaterThanOrEqualTo(2);
+    }
+
 }

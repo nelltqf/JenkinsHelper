@@ -1,15 +1,14 @@
 package happy.rabbit.controller;
 
-import happy.rabbit.data.Dao;
+import happy.rabbit.analyzer.Analyzer;
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
 import happy.rabbit.domain.TestResult;
-import happy.rabbit.http.JenkinsApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,9 +17,12 @@ public class JenkinsService {
 
     private final JenkinsServiceHelper jenkinsServiceHelper;
 
+    private final Analyzer analyzer;
+
     @Autowired
-    public JenkinsService(@NotNull Dao dao, @NotNull JenkinsApi jenkinsApi, JenkinsServiceHelper jenkinsServiceHelper) {
+    public JenkinsService(JenkinsServiceHelper jenkinsServiceHelper, Analyzer analyzer) {
         this.jenkinsServiceHelper = jenkinsServiceHelper;
+        this.analyzer = analyzer;
     }
 
     public Job getJobInformation(String jobName) {
@@ -33,6 +35,18 @@ public class JenkinsService {
 
         // Analise errors and set failure reason and description
         // Update failure reason and description on jenkins and in database
+        jobs.stream()
+                .filter(Job::isPipeline)
+                .map(Job::getBuilds)
+                .flatMap(Collection::stream)
+                .forEach(build -> {
+                    build.setFailureReason(analyzer.getFailureReason(build));
+                    build.setDescription(analyzer.getDescription(build));
+                    updateBuildDisplay(build.getJob().getDisplayName(),
+                            String.valueOf(build.getId()),
+                            build.getFailureReason(),
+                            build.getDescription());
+                });
     }
 
     private void collectErrors(Job job) {
@@ -76,5 +90,9 @@ public class JenkinsService {
                 .stream()
                 .filter(Job::isActive)
                 .collect(Collectors.toList());
+    }
+
+    public void updateBuildDisplay(String jobName, String id, String failureReason, String description) {
+        jenkinsServiceHelper.updateBuildDisplay(jobName, id, failureReason, description);
     }
 }

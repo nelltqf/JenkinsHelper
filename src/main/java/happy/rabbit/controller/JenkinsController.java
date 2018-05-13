@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RequestMapping("/")
@@ -47,10 +48,19 @@ public class JenkinsController {
         return jenkinsService.getJobInformation(jobName);
     }
 
-    @RequestMapping(value = "/{jobName}",
+    @RequestMapping(value = "/saveJob",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Job saveJob(@RequestBody Job job) {
         return jenkinsService.saveNewJob(job);
+    }
+
+    @RequestMapping(value = "/{jobName}/{ID}",
+            method = RequestMethod.GET,
+    produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updateBuildDisplay(@PathVariable String jobName, @PathVariable String ID,
+                       @PathParam("failureReason") String failureReason,
+                       @PathParam("description") String description) {
+        jenkinsService.updateBuildDisplay(jobName, ID, failureReason, description);
     }
 }

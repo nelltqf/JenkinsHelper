@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -45,8 +46,8 @@ public class JenkinsServiceHelper {
         if (!job.isPipeline()) {
             job.getBuilds().forEach(build -> {
                 HttpResponse testResponse = jenkinsApi.getErrors(build);
-                checkResponseStatusCode(response, "Can't get test results from Jenkins: " + build);
-                build.setTestResults(Parser.parseTests(Utils.httpResponseAsString(response)));
+                checkResponseStatusCode(testResponse, "Can't get test results from Jenkins: " + build);
+                build.setTestResults(Parser.parseTests(Utils.httpResponseAsString(testResponse), build));
             });
         }
         return job;
@@ -74,10 +75,14 @@ public class JenkinsServiceHelper {
     }
 
     private Build findOrCreateBuild(Build build, Job jobFromDatabase) {
-        return jobFromDatabase.getBuilds()
+        Optional<Build> optional = jobFromDatabase.getBuilds()
                 .stream()
                 .filter(buildDB -> buildDB.getBuildId().equals(build.getBuildId()))
-                .findAny()
-                .orElse(dao.saveBuild(build));
+                .findAny();
+        return optional.orElseGet(() -> dao.saveBuild(build));
+    }
+
+    public void updateBuildDisplay(String jobName, String id, String failureReason, String description) {
+        jenkinsApi.fillJobNameAndDescription(jobName, id, failureReason, description);
     }
 }

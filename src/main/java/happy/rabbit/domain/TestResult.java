@@ -1,5 +1,8 @@
 package happy.rabbit.domain;
 
+import org.hibernate.annotations.Type;
+
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -13,6 +16,7 @@ public class TestResult {
 
     private String errorDetails;
 
+    @Column(columnDefinition = "TEXT")
     private String errorStackTrace;
 
     private Status status;

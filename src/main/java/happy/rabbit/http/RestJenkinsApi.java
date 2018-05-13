@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import static happy.rabbit.utils.Utils.getJsonObjectFromJenkinsItem;
-
 public class RestJenkinsApi implements JenkinsApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestJenkinsApi.class);
@@ -23,7 +21,7 @@ public class RestJenkinsApi implements JenkinsApi {
         this.baseUrl = baseUrl + "/";
         this.username = username;
         this.password = password;
-//        jenkinsCrumb = getJenkinsCrumb();
+        jenkinsCrumb = getJenkinsCrumb();
     }
 
     public String getJenkinsCrumb() {
@@ -51,18 +49,25 @@ public class RestJenkinsApi implements JenkinsApi {
         }
     }
 
-    public void fillJobNameAndDescription(Build build) {
-        JSONObject jsonObject = getJsonObjectFromJenkinsItem(build);
+    public void fillJobNameAndDescription(String jobName, String id, String title, String description) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("displayName", "#" + id + " [" + title + "]");
+        jsonObject.put("description", description);
+        jsonObject.put("core:apply", "");
         jsonObject.put("Jenkins-Crumb", jenkinsCrumb);
         try {
-            Request.post(baseUrl + JOB + build.getJob().getDisplayName()
-                    + UPDATE_DESCRIPTION.replace("{id}", String.valueOf(build.getId())))
+            HttpResponse response = Request.post(baseUrl + JOB + jobName + "/"
+                    + UPDATE_DESCRIPTION.replace("{id}", id))
                     .withBasicAuth(username, password)
                     .withHeader("Jenkins-Crumb", jenkinsCrumb)
                     .withFormField("json", jsonObject.toString())
-                    .asString();
+                    .asResponse();
+            if (response.getStatusLine().getStatusCode() != 302) {
+                throw new IllegalStateException(response.getStatusLine().getReasonPhrase());
+            }
         } catch (Exception e) {
-            LOGGER.error("Exception during getting build " + build + " from Jenkins", e);
+            LOGGER.error("Exception during updating description at " + jobName + "#" + id
+                    + " from Jenkins", e);
             throw new IllegalStateException(e);
         }
     }

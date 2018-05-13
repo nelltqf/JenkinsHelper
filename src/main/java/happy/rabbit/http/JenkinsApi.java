@@ -15,7 +15,7 @@ public interface JenkinsApi {
 
     HttpResponse getJobJson(String jobName);
 
-    void fillJobNameAndDescription(Build jenkinsItem);
+    void fillJobNameAndDescription(String jobName, String id, String title, String description);
 
     HttpResponse getErrors(Build jenkinsItem);
 

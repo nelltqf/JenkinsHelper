@@ -53,7 +53,7 @@ public class BuildId implements Serializable {
         if (obj instanceof BuildId) {
             BuildId other = (BuildId) obj;
             return this.id.equals(other.id)
-                    && this.job.equals(other.job);
+                    && this.job.getDisplayName().equals(other.job.getDisplayName());
         }
 
         return false;

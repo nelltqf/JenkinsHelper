@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import happy.rabbit.domain.Build;
 import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
 import happy.rabbit.domain.TestResult;
@@ -66,7 +67,7 @@ public class Parser {
         return job;
     }
 
-    public static List<TestResult> parseTests(String json) {
+    public static List<TestResult> parseTests(String json, Build build) {
         List<TestResult> testResults = new ArrayList<>();
         try {
             JsonNode jsonNode = CUSTOM_MAPPER.readTree(new BufferedReader(new StringReader(json)));
@@ -77,6 +78,7 @@ public class Parser {
                 testResults.addAll(CUSTOM_MAPPER.readValue(node.get("cases").toString(), new TypeReference<List<TestResult>>() {
                 }));
             }
+            testResults.forEach(testResult -> testResult.setBuild(build));
             return testResults;
         } catch (IOException e) {
             LOGGER.error("Error while parsing: ", e);
