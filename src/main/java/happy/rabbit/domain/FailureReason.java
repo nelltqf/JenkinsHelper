@@ -5,5 +5,6 @@ public enum FailureReason {
     REG,
     TEST,
     TECH,
-    UNKNOWN
+    UNKNOWN,
+    NONE
 }

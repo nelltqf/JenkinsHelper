@@ -50,6 +50,9 @@ public class JenkinsService {
     }
 
     private void collectErrors(Job job) {
+        if (!job.isPipeline()) {
+            return;
+        }
         List<Job> testJobs = job.getTestJobs();
         List<Build> pipelineRuns = job.getBuilds();
 
