@@ -2,6 +2,7 @@ package happy.rabbit.domain;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Table(name = "BUILD")
 @Entity
@@ -145,5 +146,12 @@ public class Build {
 
     public void setCauseBuild(Build causeBuild) {
         this.causeBuild = causeBuild;
+    }
+
+    public List<TestResult> getFailedTests() {
+        return getTestResults()
+                .stream()
+                .filter(testResult -> !testResult.getStatus().isPassed())
+                .collect(Collectors.toList());
     }
 }
