@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring-context.xml")
-public class JenkinsServiceTest {
+public class JenkinsServiceImplTest {
 
     @Autowired
     private JenkinsService jenkinsService;
