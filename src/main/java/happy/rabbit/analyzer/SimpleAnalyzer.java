@@ -14,7 +14,7 @@ public class SimpleAnalyzer implements Analyzer {
     @Override
     public String getFailureReason(Build build) {
         String failureReason = FailureReason.UNKNOWN.name();
-        if (build.getFailedTests().isEmpty()) {
+        if (build.showOnlyFailedTests().isEmpty()) {
             return FailureReason.NONE.name();
         }
         return failureReason;
@@ -23,7 +23,7 @@ public class SimpleAnalyzer implements Analyzer {
     @Override
     public String getDescription(Build build) {
         String description = "";
-        List<TestResult> failedTests = build.getFailedTests();
+        List<TestResult> failedTests = build.showOnlyFailedTests();
         if (failedTests.isEmpty()) {
             return description;
         }

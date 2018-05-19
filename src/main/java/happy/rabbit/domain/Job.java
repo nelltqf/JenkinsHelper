@@ -1,9 +1,16 @@
 package happy.rabbit.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "displayName")
 @Table(name = "JOB")
 @Entity
 public class Job {
@@ -24,6 +31,7 @@ public class Job {
     private List<Build> builds = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Job> testJobs = new ArrayList<>();
 
     public Job() {

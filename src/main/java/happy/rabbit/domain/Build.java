@@ -1,9 +1,17 @@
 package happy.rabbit.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 @Table(name = "BUILD")
 @Entity
 public class Build {
@@ -129,11 +137,11 @@ public class Build {
     }
 
     public Job getCauseJobName() {
-        return causeBuild.getJob();
+        return causeBuild == null ? null : causeBuild.getJob();
     }
 
     public Long getCauseNumber() {
-        return causeBuild.getId();
+        return causeBuild == null ? null : causeBuild.getId();
     }
 
     public void setCauseId(BuildId causeId) {
@@ -148,7 +156,7 @@ public class Build {
         this.causeBuild = causeBuild;
     }
 
-    public List<TestResult> getFailedTests() {
+    public List<TestResult> showOnlyFailedTests() {
         return getTestResults()
                 .stream()
                 .filter(testResult -> !testResult.getStatus().isPassed())

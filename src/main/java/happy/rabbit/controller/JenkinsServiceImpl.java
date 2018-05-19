@@ -41,7 +41,7 @@ public class JenkinsServiceImpl implements JenkinsService {
                 .forEach(build -> {
                     build.setFailureReason(analyzer.getFailureReason(build));
                     build.setDescription(analyzer.getDescription(build));
-                    updateBuildDisplay(build.getJob(),
+                    updateBuildDisplay(build.getJob().getDisplayName(),
                             String.valueOf(build.getId()),
                             build.getFailureReason(),
                             build.getDescription());
