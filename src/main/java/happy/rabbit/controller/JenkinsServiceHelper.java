@@ -3,6 +3,7 @@ package happy.rabbit.controller;
 import happy.rabbit.data.Dao;
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
+import happy.rabbit.domain.TestResult;
 import happy.rabbit.http.JenkinsApi;
 import happy.rabbit.parser.Parser;
 import happy.rabbit.utils.Utils;
@@ -10,6 +11,7 @@ import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +36,9 @@ public class JenkinsServiceHelper {
             dao.saveJob(jobFromJenkins);
             return jobFromJenkins;
         }
-        return mergeJob(jobFromDatabase, jobFromJenkins);
+        Job job = mergeJob(jobFromDatabase, jobFromJenkins);
+        collectErrors(job);
+        return job;
     }
 
     public List<Job> getAllJobs() {
@@ -100,4 +104,36 @@ public class JenkinsServiceHelper {
         jobFromDatabase.setIsActive(job.isActive());
         return jobFromDatabase;
     }
+
+    private void collectErrors(Job job) {
+        if (!job.isPipeline()) {
+            return;
+        }
+        List<Job> testJobs = job.getTestJobs();
+        List<Build> pipelineRuns = job.getBuilds();
+
+        pipelineRuns.forEach(pipelineRun -> {
+            List<TestResult> testResults = getTestResultsForPipelineRun(pipelineRun, testJobs);
+            pipelineRun.setTestResults(testResults);
+        });
+    }
+
+    private List<TestResult> getTestResultsForPipelineRun(Build pipelineRun, List<Job> testJobs) {
+        List<Build> testBuilds = new ArrayList<>();
+        testJobs.forEach(testJob -> testBuilds.add(findMatchingBuild(pipelineRun, testJob)));
+
+        List<TestResult> testResults = new ArrayList<>();
+        testBuilds.forEach(testBuild -> testResults.addAll(testBuild.getTestResults()));
+        return testResults;
+    }
+
+    private Build findMatchingBuild(Build pipelineRun, Job testJob) {
+        return testJob.getBuilds()
+                .stream()
+                .filter(testBuild -> testBuild.getCauseBuild().getBuildId().equals(pipelineRun.getBuildId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Can't find test build in job " + testJob
+                        + "for pipeline run" + pipelineRun));
+    }
+
 }

@@ -2,12 +2,11 @@ package happy.rabbit.controller;
 
 import happy.rabbit.analyzer.Analyzer;
 import happy.rabbit.domain.Build;
+import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
-import happy.rabbit.domain.TestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,15 +26,12 @@ public class JenkinsServiceImpl implements JenkinsService {
 
     @Override
     public Job getJobInformation(String jobName) {
-        Job job = jenkinsServiceHelper.getRefreshedJob(jobName);
-        collectErrors(job);
-        return job;
+        return jenkinsServiceHelper.getRefreshedJob(jobName);
     }
 
     @Override
     public void analyzeAndUpdateAllActivePipelines() {
         List<Job> jobs = getAllActiveJobs();
-        jobs.forEach(this::collectErrors);
         jobs.stream()
                 .filter(Job::isPipeline)
                 .map(Job::getBuilds)
@@ -50,45 +46,28 @@ public class JenkinsServiceImpl implements JenkinsService {
                 });
     }
 
-    private void collectErrors(Job job) {
-        if (!job.isPipeline()) {
-            return;
-        }
-        List<Job> testJobs = job.getTestJobs();
-        List<Build> pipelineRuns = job.getBuilds();
-
-        pipelineRuns.forEach(pipelineRun -> {
-            List<TestResult> testResults = getTestResultsForPipelineRun(pipelineRun, testJobs);
-            pipelineRun.setTestResults(testResults);
-        });
-    }
-
-    private List<TestResult> getTestResultsForPipelineRun(Build pipelineRun, List<Job> testJobs) {
-        List<Build> testBuilds = new ArrayList<>();
-        testJobs.forEach(testJob -> testBuilds.add(findMatchingBuild(pipelineRun, testJob)));
-
-        List<TestResult> testResults = new ArrayList<>();
-        testBuilds.forEach(testBuild -> testResults.addAll(testBuild.getTestResults()));
-        return testResults;
-    }
-
-    private Build findMatchingBuild(Build pipelineRun, Job testJob) {
-        return testJob.getBuilds()
-                .stream()
-                .filter(testBuild -> testBuild.getCauseBuild().getBuildId().equals(pipelineRun.getBuildId()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Can't find test build in job " + testJob
-                        + "for pipeline run" + pipelineRun));
-    }
-
     @Override
     public Job saveNewJob(Job job) {
         return jenkinsServiceHelper.saveJob(job);
     }
 
     @Override
-    public List<Job> getAllJobs() {
-        return jenkinsServiceHelper.getAllJobs();
+    public List<String> getAllJobNames() {
+        return jenkinsServiceHelper.getAllJobs()
+                .stream()
+                .filter(Job::isPipeline)
+                .map(Job::getDisplayName)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getAllJobBuilds(String jobName) {
+        return jenkinsServiceHelper.getRefreshedJob(jobName)
+                .getBuilds()
+                .stream()
+                .map(Build::getBuildId)
+                .map(BuildId::toString)
+                .collect(Collectors.toList());
     }
 
     private List<Job> getAllActiveJobs() {
@@ -111,5 +90,15 @@ public class JenkinsServiceImpl implements JenkinsService {
                 .collect(Collectors.toList());
         job.setTestJobs(testJobsList);
         return jenkinsServiceHelper.getRefreshedJob(job.getDisplayName());
+    }
+
+    @Override
+    public Build getBuild(String jobName, String id) {
+        return jenkinsServiceHelper.getRefreshedJob(jobName)
+                .getBuilds()
+                .stream()
+                .filter(build -> build.getBuildId().getId().equals(Long.valueOf(id)))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Can't find build"));
     }
 }

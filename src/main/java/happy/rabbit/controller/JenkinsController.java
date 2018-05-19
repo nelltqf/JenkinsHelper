@@ -1,5 +1,6 @@
 package happy.rabbit.controller;
 
+import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,19 +35,33 @@ public class JenkinsController {
         return jenkinsService.saveNewJob(job);
     }
 
-    @RequestMapping(value = "/{jobName}/addTestJob",
+    @RequestMapping(value = "/{jobName}/addTestJobs",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Job addNewJob(@PathVariable String jobName, @RequestBody List<String> testJobs) {
+    public Job addTestJobs(@PathVariable String jobName, @RequestBody List<String> testJobs) {
         return jenkinsService.addTestJobs(jobName, testJobs);
+    }
+
+    @RequestMapping(value = "/{jobName}/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Build getBuildInformation(@PathVariable String jobName, @PathVariable String id) {
+        return jenkinsService.getBuild(jobName, id);
     }
 
     @RequestMapping(value = "/all",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Job> getAllJobs() {
-        return jenkinsService.getAllJobs();
+    public List<String> getAllJobs() {
+        return jenkinsService.getAllJobNames();
+    }
+
+    @RequestMapping(value = "/{jobName}/all",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getAllBuild(@PathVariable String jobName) {
+        return jenkinsService.getAllJobBuilds(jobName);
     }
 
     @RequestMapping(value = "/{jobName}",
@@ -64,7 +79,7 @@ public class JenkinsController {
     }
 
     @RequestMapping(value = "/{jobName}/{ID}",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
     produces = MediaType.APPLICATION_JSON_VALUE)
     public void updateBuildDisplay(@PathVariable String jobName, @PathVariable String ID,
                        @PathParam("failureReason") String failureReason,
