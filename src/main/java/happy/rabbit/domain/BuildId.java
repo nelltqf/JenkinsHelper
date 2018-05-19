@@ -1,11 +1,14 @@
 package happy.rabbit.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
+@JsonIgnoreProperties("job")
 @Embeddable
 public class BuildId implements Serializable {
 

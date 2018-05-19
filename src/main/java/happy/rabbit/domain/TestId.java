@@ -1,10 +1,13 @@
 package happy.rabbit.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
+@JsonIgnoreProperties("build")
 @Embeddable
 public class TestId implements Serializable {
 

@@ -1,5 +1,7 @@
 package happy.rabbit.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;

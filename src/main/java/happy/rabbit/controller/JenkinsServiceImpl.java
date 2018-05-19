@@ -27,7 +27,9 @@ public class JenkinsServiceImpl implements JenkinsService {
 
     @Override
     public Job getJobInformation(String jobName) {
-        return jenkinsServiceHelper.getRefreshedJob(jobName);
+        Job job = jenkinsServiceHelper.getRefreshedJob(jobName);
+        collectErrors(job);
+        return job;
     }
 
     @Override
@@ -73,7 +75,7 @@ public class JenkinsServiceImpl implements JenkinsService {
     private Build findMatchingBuild(Build pipelineRun, Job testJob) {
         return testJob.getBuilds()
                 .stream()
-                .filter(testBuild -> testBuild.getCauseBuild().equals(pipelineRun))
+                .filter(testBuild -> testBuild.getCauseBuild().getBuildId().equals(pipelineRun.getBuildId()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Can't find test build in job " + testJob
                         + "for pipeline run" + pipelineRun));
@@ -81,7 +83,7 @@ public class JenkinsServiceImpl implements JenkinsService {
 
     @Override
     public Job saveNewJob(Job job) {
-        return job;
+        return jenkinsServiceHelper.saveJob(job);
     }
 
     @Override
@@ -99,5 +101,15 @@ public class JenkinsServiceImpl implements JenkinsService {
     @Override
     public void updateBuildDisplay(String jobName, String id, String failureReason, String description) {
         jenkinsServiceHelper.updateBuildDisplay(jobName, id, failureReason, description);
+    }
+
+    @Override
+    public Job addTestJobs(String jobName, List<String> testJobs) {
+        Job job = jenkinsServiceHelper.getRefreshedJob(jobName);
+        List<Job> testJobsList = testJobs.stream()
+                .map(jenkinsServiceHelper::getRefreshedJob)
+                .collect(Collectors.toList());
+        job.setTestJobs(testJobsList);
+        return jenkinsServiceHelper.getRefreshedJob(job.getDisplayName());
     }
 }

@@ -15,4 +15,6 @@ public interface JenkinsService {
     List<Job> getAllJobs();
 
     void updateBuildDisplay(String jobName, String id, String failureReason, String description);
+
+    Job addTestJobs(String jobName, List<String> testJobs);
 }

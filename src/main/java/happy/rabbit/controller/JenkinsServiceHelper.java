@@ -28,8 +28,8 @@ public class JenkinsServiceHelper {
     }
 
     public Job getRefreshedJob(String jobName) {
-        Job jobFromDatabase = dao.getJob(jobName);
         Job jobFromJenkins = getJobFromJenkins(jobName);
+        Job jobFromDatabase = dao.getJob(jobName);
         if (jobFromDatabase == null) {
             dao.saveJob(jobFromJenkins);
             return jobFromJenkins;
@@ -88,5 +88,16 @@ public class JenkinsServiceHelper {
 
     public void updateBuildDisplay(String jobName, String id, String failureReason, String description) {
         jenkinsApi.fillJobNameAndDescription(jobName, id, failureReason, description);
+    }
+
+    public Job saveJob(Job job) {
+        Job jobFromDatabase = dao.getJob(job.getDisplayName());
+        if (jobFromDatabase == null) {
+            dao.saveJob(job);
+            return job;
+        }
+        jobFromDatabase.setTestJobs(job.getTestJobs());
+        jobFromDatabase.setIsActive(job.isActive());
+        return jobFromDatabase;
     }
 }
