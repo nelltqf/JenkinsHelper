@@ -30,6 +30,10 @@ public class JenkinsServiceHelper {
     public Job getRefreshedJob(String jobName) {
         Job jobFromDatabase = dao.getJob(jobName);
         Job jobFromJenkins = getJobFromJenkins(jobName);
+        if (jobFromDatabase == null) {
+            dao.saveJob(jobFromJenkins);
+            return jobFromJenkins;
+        }
         return mergeJob(jobFromDatabase, jobFromJenkins);
     }
 

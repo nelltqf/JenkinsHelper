@@ -1,11 +1,13 @@
 package happy.rabbit.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,13 +27,13 @@ public class Build {
 
     private String failureReason;
 
-    // TODO make real date
-    private Long timestamp;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime date;
 
     /**
-     * Stores duration in ms
+     * Stores duration in seconds
      */
-    private Long duration;
+    private Double duration;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "testId.build")
     private List<TestResult> testResults;
@@ -65,12 +67,13 @@ public class Build {
         this.id.setId(id);
     }
 
-    public Long getTimestamp() {
-        return timestamp;
+    public LocalDateTime getDate() {
+        return date;
     }
 
-    public void setTimestamp(Long published) {
-        this.timestamp = published;
+    public void setTimestamp(Long timestamp) {
+        this.date = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp),
+                TimeZone.getDefault().toZoneId());;
     }
 
     public String getDescription() {
@@ -97,12 +100,12 @@ public class Build {
         this.id.setJob(job);
     }
 
-    public Long getDuration() {
+    public Double getDuration() {
         return duration;
     }
 
-    public void setDuration(Long duration) {
-        this.duration = duration;
+    public void setDuration(Double duration) {
+        this.duration = duration/1000;
     }
 
     public List<TestResult> getTestResults() {
