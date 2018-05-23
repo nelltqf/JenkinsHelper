@@ -82,7 +82,11 @@ public class Parser {
             return testResults;
         } catch (IOException e) {
             LOGGER.error("Error while parsing: ", e);
-            throw new IllegalStateException(e);
+            if (!json.contains("Not found")) {
+                throw new IllegalStateException(e);
+            } else {
+                return new ArrayList<>();
+            }
         }
     }
 

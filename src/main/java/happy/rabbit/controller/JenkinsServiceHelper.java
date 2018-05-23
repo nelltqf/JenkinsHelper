@@ -62,7 +62,12 @@ public class JenkinsServiceHelper {
     }
 
     private void checkResponseStatusCode(HttpResponse response, String errorMessage) {
-        if (response.getStatusLine().getStatusCode() != 200) {
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200) {
+            if (statusCode == 404) {
+                return;
+                // TODO handle situation with tech issues
+            }
             throw new IllegalArgumentException(errorMessage);
         }
     }
@@ -78,7 +83,7 @@ public class JenkinsServiceHelper {
         if (!fromDatabase.equals(build)) {
             // TODO investigate which failure reason and description has more priority
             fromDatabase.setDescription(build.getDescription());
-            fromDatabase.setFailureReason(build.getFailureReason());
+            fromDatabase.setTitle(build.getTitle());
         }
     }
 

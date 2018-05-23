@@ -2,11 +2,14 @@ package happy.rabbit.controller;
 
 import happy.rabbit.analyzer.Analyzer;
 import happy.rabbit.domain.Build;
-import happy.rabbit.domain.BuildId;
 import happy.rabbit.domain.Job;
+import happy.rabbit.statistics.Statistics;
+import happy.rabbit.statistics.StatisticsCollector;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,11 +40,11 @@ public class JenkinsServiceImpl implements JenkinsService {
                 .map(Job::getBuilds)
                 .flatMap(Collection::stream)
                 .forEach(build -> {
-                    build.setFailureReason(analyzer.getFailureReason(build));
+                    build.setTitle(analyzer.getFailureReason(build));
                     build.setDescription(analyzer.getDescription(build));
                     updateBuildDisplay(build.getJob().getDisplayName(),
                             String.valueOf(build.getId()),
-                            build.getFailureReason(),
+                            build.getTitle(),
                             build.getDescription());
                 });
     }
@@ -61,13 +64,23 @@ public class JenkinsServiceImpl implements JenkinsService {
     }
 
     @Override
-    public List<String> getAllJobBuilds(String jobName) {
-        return jenkinsServiceHelper.getRefreshedJob(jobName)
-                .getBuilds()
-                .stream()
-                .map(Build::getBuildId)
-                .map(BuildId::toString)
-                .collect(Collectors.toList());
+    public String getAllJobBuilds(String jobName) {
+        List<Build> builds = jenkinsServiceHelper.getRefreshedJob(jobName)
+                .getBuilds();
+        List<JSONObject> jsonObjects = new ArrayList<>();
+        builds.forEach(build -> {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("buildId", build.toString());
+            jsonObject.put("title", build.getTitle());
+            jsonObject.put("description", build.getDescription());
+            jsonObjects.add(jsonObject);
+        });
+        return jsonObjects.toString();
+    }
+
+    @Override
+    public Statistics getStatistics(String jobName) {
+        return new StatisticsCollector(jenkinsServiceHelper.getRefreshedJob(jobName)).getFullStatistics();
     }
 
     private List<Job> getAllActiveJobs() {

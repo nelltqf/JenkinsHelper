@@ -2,11 +2,13 @@ package happy.rabbit.controller;
 
 import happy.rabbit.domain.Build;
 import happy.rabbit.domain.Job;
+import happy.rabbit.statistics.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
+import java.util.Arrays;
 import java.util.List;
 
 @RequestMapping("/")
@@ -54,13 +56,14 @@ public class JenkinsController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public List<String> getAllJobs() {
-        return jenkinsService.getAllJobNames();
+//        return jenkinsService.getAllJobNames();
+        return Arrays.asList("TestPipeline", "Another Test Pipeline");
     }
 
     @RequestMapping(value = "/{jobName}/all",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<String> getAllBuild(@PathVariable String jobName) {
+    public String getAllBuild(@PathVariable String jobName) {
         return jenkinsService.getAllJobBuilds(jobName);
     }
 
@@ -80,10 +83,17 @@ public class JenkinsController {
 
     @RequestMapping(value = "/{jobName}/{ID}",
             method = RequestMethod.POST,
-    produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public void updateBuildDisplay(@PathVariable String jobName, @PathVariable String ID,
-                       @PathParam("failureReason") String failureReason,
-                       @PathParam("description") String description) {
+                                   @PathParam("failureReason") String failureReason,
+                                   @PathParam("description") String description) {
         jenkinsService.updateBuildDisplay(jobName, ID, failureReason, description);
+    }
+
+    @RequestMapping(value = "/{jobName}/stat",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Statistics updateBuildDisplay(@PathVariable String jobName) {
+        return jenkinsService.getStatistics(jobName);
     }
 }

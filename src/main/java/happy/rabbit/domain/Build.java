@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TimeZone;
@@ -25,7 +24,7 @@ public class Build {
 
     private Result result;
 
-    private String failureReason;
+    private String title;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
@@ -84,12 +83,12 @@ public class Build {
         this.description = content;
     }
 
-    public String getFailureReason() {
-        return failureReason;
+    public String getTitle() {
+        return title;
     }
 
-    public void setFailureReason(String failureReason) {
-        this.failureReason = failureReason;
+    public void setTitle(String failureReason) {
+        this.title = failureReason;
     }
 
     public Job getJob() {
@@ -126,7 +125,7 @@ public class Build {
 
     public void setDisplayName(String displayName) {
         if (displayName.contains("[") && displayName.contains("]")) {
-            this.failureReason = displayName.substring(displayName.indexOf('[') + 1, displayName.lastIndexOf(']'));
+            this.title = displayName.substring(displayName.indexOf('[') + 1, displayName.lastIndexOf(']'));
         }
     }
 
