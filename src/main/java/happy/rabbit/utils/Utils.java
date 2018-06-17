@@ -15,6 +15,10 @@ import java.util.Properties;
 
 public class Utils {
 
+    public static String clean(String jobName) {
+        return jobName.replaceAll(" ", "").replaceAll(" ", "");
+    }
+
     public static String getProperty(String propertyName) {
         if (System.getProperties().isEmpty()) {
             Properties properties = new Properties();

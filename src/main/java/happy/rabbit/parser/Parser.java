@@ -81,11 +81,11 @@ public class Parser {
             testResults.forEach(testResult -> testResult.setBuild(build));
             return testResults;
         } catch (IOException e) {
-            LOGGER.error("Error while parsing: ", e);
-            if (!json.contains("Not found")) {
-                throw new IllegalStateException(e);
-            } else {
+            if (json.contains("Not found")) {
+                LOGGER.error("Test results not found");
                 return new ArrayList<>();
+            } else {
+                throw new IllegalStateException(e);
             }
         }
     }
